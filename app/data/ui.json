@@ -1,0 +1,15 @@
+{
+  "mainmenu": {
+    "sales": "Продажі",
+    "analytics": "Аналітика",
+    "warehouse": "Склад"
+  },
+  "status": {
+    "new": "Новий",
+    "prepay": "Сплачено",
+    "inprogress": "В роботі",
+    "finished": "Доставлено",
+    "ready": "Готово",
+    "canceled": "Скасовано"
+  }
+}
