@@ -74,4 +74,31 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+  .topBar {
+    @apply bg-zinc-100 dark:bg-zinc-800;
+  }
+}
+
+.status-new {
+  color: rgb(155, 89, 182) !important;
+}
+
+.status-prepay {
+  color: rgb(230, 126, 34) !important;
+}
+
+.status-inprogress {
+  color: rgb(52, 152, 219) !important;
+}
+
+.status-finished {
+  color: rgb(189, 195, 199) !important;
+}
+
+.status-ready {
+  color: rgb(46, 204, 113) !important;
+}
+
+.status-canceled {
+  color: rgb(231, 76, 60) !important;
 }

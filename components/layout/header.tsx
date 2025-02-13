@@ -1,13 +1,13 @@
 "use client";
 import Link from "next/link";
-import { RiBox3Fill, RiBarChart2Fill, RiHome6Fill, RiLogoutBoxRFill } from "react-icons/ri";
+import { RiBox3Fill, RiBarChart2Fill, RiHome6Fill, RiLogoutBoxRFill, RiMoonFill, RiSunFill } from "react-icons/ri";
 import { Button, buttonVariants } from "@/components/ui/button";
 import styles from "./header.module.scss";
 import { signOut } from "next-auth/react";
 import ui from "@/app/data/ui.json";
 import { usePathname } from "next/navigation";
 
-export default function Header() {
+export default function Header({ themeToggler, theme }: Readonly<{ themeToggler: () => void; theme: string }>) {
   const pathname = usePathname();
 
   async function handleLogout() {
@@ -25,9 +25,15 @@ export default function Header() {
       <Link href="/warehouse" className={buttonVariants({ variant: "link" })}>
         <RiHome6Fill style={{ width: "24px", height: "24px" }} /> {ui.mainmenu.warehouse}
       </Link>
-      <Button variant={"link"} onClick={() => handleLogout()} className={styles.logout}>
-        <RiLogoutBoxRFill style={{ width: "24px", height: "24px" }} />
-      </Button>
+
+      <div className={styles.right}>
+        <Button variant={"link"} onClick={() => themeToggler()}>
+          {theme === "dark" ? <RiSunFill style={{ width: "24px", height: "24px" }} /> : <RiMoonFill style={{ width: "24px", height: "24px" }} />}
+        </Button>
+        <Button variant={"link"} onClick={() => handleLogout()}>
+          <RiLogoutBoxRFill style={{ width: "24px", height: "24px" }} />
+        </Button>
+      </div>
     </header>
   );
 }

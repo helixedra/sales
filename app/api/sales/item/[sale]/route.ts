@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
 export async function GET(request: Request, { params }: { params: { sale: string } }) {
-  const { sale } = params;
+  const { sale } = await params;
 
   if (!sale) {
     return NextResponse.json({ error: "Sale number is required" }, { status: 400 });

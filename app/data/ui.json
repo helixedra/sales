@@ -1,4 +1,31 @@
 {
+  "global": {
+    "add_new": "Нове замовлення",
+    "status": "Статус",
+    "receipt": "Накладна",
+    "request_form": "Бланк замовлення",
+    "invoice": "Рахунок",
+    "order_date": "Дата замовлення",
+    "customer": "Замовник",
+    "phone": "Телефон",
+    "email": "Електронна пошта",
+    "address": "Адреса",
+    "order_sum": "Сума замовлення",
+    "paid": "Сплачено",
+    "left": "Залишок",
+    "deadline": "Термін"
+  },
+
+  "order": {
+    "order_number": "Номер замовлення",
+    "order_date": "Дата замовлення",
+    "description": "Опис",
+    "qty": "Кількість",
+    "price": "Ціна",
+    "sum": "Сума",
+    "discount": "Знижка"
+  },
+
   "mainmenu": {
     "sales": "Продажі",
     "analytics": "Аналітика",
