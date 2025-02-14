@@ -1,14 +1,14 @@
 "use client";
-
+import axios from "axios";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Order } from "@/interfaces/order";
-import { Sale } from "@/interfaces/sale";
+import { Order } from "@/app/types/order";
+import { Sale } from "@/app/types/sale";
 import Status from "@/components/shared/status";
 import { Input } from "@/components/ui/input";
 import { RiSearchLine, RiAddFill } from "react-icons/ri";
-import statuses from "@/lib/status";
+import statuses from "@/app/types/status";
 import Loader from "@/components/shared/loader";
 import ui from "@/app/data/ui.json";
 import Link from "next/link";
@@ -22,10 +22,14 @@ export default function Home() {
 
   async function fetchSalesData() {
     setIsLoading(true);
-    const response = await fetch("/api/sales");
-    const data = await response.json();
-    setSalesData(data);
-    setIsLoading(false);
+    try {
+      const response = await axios.get("/api/sales");
+      setSalesData(response.data);
+    } catch (error) {
+      console.error("Error fetching sales data:", error);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   useEffect(() => {

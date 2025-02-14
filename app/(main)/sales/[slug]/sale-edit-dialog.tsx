@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-
+import axios from "axios";
 import { useForm, SubmitHandler, useWatch } from "react-hook-form";
 import moment from "moment";
 
@@ -36,19 +36,12 @@ export default function SaleEditDialog({ dialog, trigger, data, fetchSalesData }
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     const formData = { ...data, number: data.number };
     try {
-      const response = await fetch("/api/sales/update/sale-info", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
+      const response = await axios.post("/api/sales/update/sale-info", formData);
+      if (response.status === 200) {
         trigger();
         fetchSalesData();
       } else {
-        // console.error("Error updating sale");
+        console.error("Error updating sale");
       }
     } catch (error) {
       console.error("Error updating sale:", error);

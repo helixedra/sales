@@ -3,14 +3,17 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import ui from "@/app/data/ui.json";
-import statuses from "@/lib/status";
+import statuses from "@/app/types/status";
 import { Button } from "@/components/ui/button";
-import { RiBillLine, RiReceiptLine, RiMoneyDollarBoxLine, RiMessage2Fill, RiEditFill, RiCircleFill } from "react-icons/ri";
+import { RiBillLine, RiReceiptLine, RiMoneyDollarBoxLine, RiMessage2Fill, RiEditFill, RiCircleFill, RiChatNewLine } from "react-icons/ri";
 import moment from "moment";
 import Loader from "@/components/shared/loader";
 import SaleEditDialog from "./sale-edit-dialog";
-import { Sale } from "@/interfaces/sale";
-import { Order } from "@/interfaces/order";
+import { Sale } from "@/app/types/sale";
+import { Order } from "@/app/types/order";
+import OrderEditDialog from "./order-edit-dialog";
+import CommentDialog from "./comment-dialog";
+import axios from "axios";
 
 export default function SalePage() {
   const saleInitialState: Sale = {
@@ -35,6 +38,9 @@ export default function SalePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedStatus, setSelectedStatus] = useState<string>("");
   const [saleEditDialog, setSaleEditDialog] = useState(false);
+  const [orderEditDialog, setOrderEditDialog] = useState(false);
+  const [orderInEdit, setOrderInEdit] = useState<Order | null>(null);
+  const [commentDialog, setCommentDialog] = useState(false);
 
   const date = moment(salesData.date).format("DD.MM.YYYY");
   const deadlineDate = moment(salesData.date).add(Number(salesData.deadline), "days");
@@ -42,26 +48,24 @@ export default function SalePage() {
   const orderSum = salesData.orders.reduce((acc: number, order: Order) => acc + order.order_sum, 0);
   const payLeft = orderSum - salesData.prepay;
 
+  function handleOrderEditData(id: number) {
+    setOrderInEdit(salesData.orders.find((order) => order.order_id === id) || null);
+    setOrderEditDialog(true);
+  }
+
   function handleStatusChange(status: string) {
     setSelectedStatus(status);
 
     async function updateStatus() {
       try {
-        const response = await fetch(`/api/sales/update/status`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ status, number: salesData.number }),
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to update status");
+        const response = await axios.post(`/api/sales/update/status`, { status, number: salesData.number });
+        if (response.status == 200) {
+          fetchSalesData();
+        } else {
+          console.error("Error updating status");
         }
-        fetchSalesData();
       } catch (error) {
         console.error("Error updating status:", error);
-        // Revert the status if the update fails
         setSelectedStatus(salesData.status);
       }
     }
@@ -88,7 +92,10 @@ export default function SalePage() {
       {!isLoading && salesData && (
         <>
           <div className="topBar flex p-6 items-center">
-            <div className="text-4xl mr-6 pr-6 border-r border-1  border-gray-200 dark:border-zinc-700 border-solid">№ {salesData.number}</div>
+            <div className="flex items-center text-4xl mr-6 pr-6 border-r border-1  border-gray-200 dark:border-zinc-700 border-solid">
+              <div className="mr-4">№ {salesData.number}</div>
+              <div className="text-xl opacity-50">від {date}</div>
+            </div>
             <div className={`status-${salesData.status} mr-4`}>
               <RiCircleFill />
             </div>
@@ -107,6 +114,12 @@ export default function SalePage() {
               </Select>
             </div>
             <div className="actionButtons ml-auto space-x-4">
+              {!salesData.comment && (
+                <Button onClick={() => setCommentDialog(true)} variant="outline" className="border border-solid text-orange-500 border-orange-500 bg-transparent hover:bg-orange-500 hover:text-white">
+                  <RiChatNewLine />
+                  {ui.global.add_comment}
+                </Button>
+              )}
               <Button>
                 <RiReceiptLine />
                 {ui.global.receipt}
@@ -123,8 +136,7 @@ export default function SalePage() {
           </div>
 
           <div className="orderInfo justify-between border border-zinc-200 dark:border-zinc-800 rounded-sm px-6 m-6">
-            <div className="grid grid-cols-11 divide-x-1 text-left py-4 text-default dark:text-zinc-600 text-sm gap-8 items-center ">
-              <div className="cutLine">{ui.global.order_date}</div>
+            <div className="grid grid-cols-10 divide-x-1 text-left py-4 text-default dark:text-zinc-600 text-sm gap-8 items-center ">
               <div className="col-span-2 cutLine">{ui.global.customer}</div>
               <div className="cutLine">{ui.global.phone}</div>
               <div className="cutLine">{ui.global.email}</div>
@@ -141,8 +153,7 @@ export default function SalePage() {
                 </div>
               </div>
             </div>
-            <div className="grid grid-cols-11 divide-x-1 text-left gap-8 py-6 border-t border-zinc-200 dark:border-zinc-800 divide-x">
-              <div className="">{date}</div>
+            <div className="grid grid-cols-10 divide-x-1 text-left gap-8 py-6 border-t border-zinc-200 dark:border-zinc-800 divide-x">
               <div className="pl-4 break-all col-span-2">{salesData.client}</div>
               <div className="pl-4">{salesData.tel}</div>
               <div className="pl-4">{salesData.email}</div>
@@ -159,7 +170,7 @@ export default function SalePage() {
                   currency: "UAH",
                 })}
               </div>
-              <div className="pl-4">
+              <div className={payLeft > 0 ? "text-red-500 pl-4" : "pl-4"}>
                 {payLeft.toLocaleString("uk-UA", {
                   style: "currency",
                   currency: "UAH",
@@ -173,13 +184,16 @@ export default function SalePage() {
 
           {salesData.comment && (
             <div className="commentBlock p-6 bg-orange-100 dark:bg-orange-950 text-orange-950 dark:text-orange-300 m-6 rounded-sm">
-              <div className="relative">
-                <div className="absolute top-1 left-0 text-orange-400 p-2 rounded-t-sm">
+              <div className="flex min-h-10 justify-center">
+                <div className=" text-orange-400 p-2 rounded-t-sm">
                   <RiMessage2Fill style={{ width: "24px", height: "24px" }} />
                 </div>
-                <div style={{ whiteSpace: "pre-line" }} className="pl-14">
+                <div style={{ whiteSpace: "pre-line" }} className="flex px-4 items-center flex-1">
                   {salesData.comment.replace(/\\r\\n/g, "\r\n")}
                 </div>
+                <Button variant={"ghost"} className=" bg-orange-200 text-orange-500 hover:bg-orange-500 hover:text-white dark:bg-opacity-15 dark:bg-orange-900 dark:text-orange-200" onClick={() => setCommentDialog(true)}>
+                  <RiEditFill />
+                </Button>
               </div>
             </div>
           )}
@@ -215,8 +229,8 @@ export default function SalePage() {
                       currency: "UAH",
                     })}
                   </div>
-                  <div className="w-[4%]">
-                    <Button variant={"outline"}>
+                  <div className="w-[4%] flex">
+                    <Button className="ml-auto" variant={"outline"} onClick={() => handleOrderEditData(order.order_id)}>
                       <RiEditFill />
                     </Button>
                   </div>
@@ -225,6 +239,8 @@ export default function SalePage() {
             </div>
           </div>
           <SaleEditDialog dialog={saleEditDialog} trigger={setSaleEditDialog} data={salesData} fetchSalesData={fetchSalesData} />
+          <OrderEditDialog dialog={orderEditDialog} trigger={setOrderEditDialog} data={orderInEdit} fetchSalesData={fetchSalesData} />
+          <CommentDialog dialog={commentDialog} trigger={setCommentDialog} data={{ number: salesData.number, comment: salesData.comment }} fetchSalesData={fetchSalesData} />
         </>
       )}
     </div>
