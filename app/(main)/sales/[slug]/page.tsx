@@ -1,44 +1,18 @@
 "use client";
 import { useState, useEffect } from "react";
-
 import { useParams } from "next/navigation";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import ui from "@/app/data/ui.json";
 import statuses from "@/lib/status";
 import { Button } from "@/components/ui/button";
 import { RiBillLine, RiReceiptLine, RiMoneyDollarBoxLine, RiMessage2Fill, RiEditFill, RiCircleFill } from "react-icons/ri";
-
 import moment from "moment";
 import Loader from "@/components/shared/loader";
 import SaleEditDialog from "./sale-edit-dialog";
+import { Sale } from "@/interfaces/sale";
+import { Order } from "@/interfaces/order";
 
 export default function SalePage() {
-  interface Sale {
-    id: number;
-    date: string;
-    status: string;
-    number: number;
-    client: string;
-    email: string;
-    tel: string;
-    address: string;
-    delivery: string;
-    deadline: number;
-    prepay: number;
-    comment: string;
-    orders: Order[];
-  }
-
-  interface Order {
-    order_id: number;
-    created: string;
-    description: string;
-    qty: number;
-    price: number;
-    order_sum: number;
-    order_dis: number;
-  }
-
   const saleInitialState: Sale = {
     id: 0,
     date: "",
@@ -62,8 +36,15 @@ export default function SalePage() {
   const [selectedStatus, setSelectedStatus] = useState<string>("");
   const [saleEditDialog, setSaleEditDialog] = useState(false);
 
+  const date = moment(salesData.date).format("DD.MM.YYYY");
+  const deadlineDate = moment(salesData.date).add(Number(salesData.deadline), "days");
+  const daysLeft = deadlineDate.diff(moment(), "days") > 0 ? deadlineDate.diff(moment(), "days") : 0;
+  const orderSum = salesData.orders.reduce((acc: number, order: Order) => acc + order.order_sum, 0);
+  const payLeft = orderSum - salesData.prepay;
+
   function handleStatusChange(status: string) {
     setSelectedStatus(status);
+
     async function updateStatus() {
       try {
         const response = await fetch(`/api/sales/update/status`, {
@@ -77,27 +58,29 @@ export default function SalePage() {
         if (!response.ok) {
           throw new Error("Failed to update status");
         }
-
-        // const result = await response.json();
+        fetchSalesData();
       } catch (error) {
         console.error("Error updating status:", error);
+        // Revert the status if the update fails
+        setSelectedStatus(salesData.status);
       }
     }
 
     updateStatus();
   }
 
-  useEffect(() => {
-    async function fetchSalesData() {
-      const response = await fetch(`/api/sales/item/${slug}`);
-      const data = await response.json();
-      setSalesData(data);
-      setIsLoading(false);
-      setSelectedStatus(data.status);
-    }
+  async function fetchSalesData() {
+    setIsLoading(true);
+    const response = await fetch(`/api/sales/item/${slug}`);
+    const data = await response.json();
+    setSalesData(data);
+    setSelectedStatus(data.status);
+    setIsLoading(false);
+  }
 
+  useEffect(() => {
     fetchSalesData();
-  }, [slug, selectedStatus]);
+  }, []);
 
   return (
     <div>
@@ -141,15 +124,15 @@ export default function SalePage() {
 
           <div className="orderInfo justify-between border border-zinc-200 dark:border-zinc-800 rounded-sm px-6 m-6">
             <div className="grid grid-cols-11 divide-x-1 text-left py-4 text-default dark:text-zinc-600 text-sm gap-8 items-center ">
-              <div className="truncate overflow-hidden">{ui.global.order_date}</div>
-              <div className="col-span-2 truncate overflow-hidden">{ui.global.customer}</div>
-              <div className="truncate overflow-hidden">{ui.global.phone}</div>
-              <div className="truncate overflow-hidden">{ui.global.email}</div>
-              <div className="col-span-2 truncate overflow-hidden">{ui.global.address}</div>
-              <div className="truncate overflow-hidden">{ui.global.order_sum}</div>
-              <div className="truncate overflow-hidden">{ui.global.paid}</div>
-              <div className="truncate overflow-hidden">{ui.global.left}</div>
-              <div className="truncate overflow-hidden flex items-center justify-between">
+              <div className="cutLine">{ui.global.order_date}</div>
+              <div className="col-span-2 cutLine">{ui.global.customer}</div>
+              <div className="cutLine">{ui.global.phone}</div>
+              <div className="cutLine">{ui.global.email}</div>
+              <div className="col-span-2 cutLine">{ui.global.address}</div>
+              <div className="cutLine">{ui.global.order_sum}</div>
+              <div className="cutLine">{ui.global.paid}</div>
+              <div className="cutLine">{ui.global.left}</div>
+              <div className="cutLine flex items-center justify-between">
                 {ui.global.deadline}
                 <div>
                   <Button variant={"outline"} className="flex ml-auto text-black dark:text-white" onClick={() => setSaleEditDialog(true)}>
@@ -159,18 +142,16 @@ export default function SalePage() {
               </div>
             </div>
             <div className="grid grid-cols-11 divide-x-1 text-left gap-8 py-6 border-t border-zinc-200 dark:border-zinc-800 divide-x">
-              <div className="">{moment(salesData.date).format("DD.MM.YYYY")}</div>
+              <div className="">{date}</div>
               <div className="pl-4 break-all col-span-2">{salesData.client}</div>
               <div className="pl-4">{salesData.tel}</div>
               <div className="pl-4">{salesData.email}</div>
               <div className="col-span-2 pl-4">{salesData.address}</div>
               <div className="pl-4">
-                {salesData.orders
-                  .reduce((acc: number, order: Order) => acc + order.order_sum, 0)
-                  .toLocaleString("uk-UA", {
-                    style: "currency",
-                    currency: "UAH",
-                  })}
+                {orderSum.toLocaleString("uk-UA", {
+                  style: "currency",
+                  currency: "UAH",
+                })}
               </div>
               <div className="pl-4">
                 {salesData.prepay.toLocaleString("uk-UA", {
@@ -179,13 +160,13 @@ export default function SalePage() {
                 })}
               </div>
               <div className="pl-4">
-                {(salesData.orders.reduce((acc: number, order: Order) => acc + order.order_sum, 0) - salesData.prepay).toLocaleString("uk-UA", {
+                {payLeft.toLocaleString("uk-UA", {
                   style: "currency",
                   currency: "UAH",
                 })}
               </div>
               <div className="pl-4">
-                {moment(salesData.date).add(Number(salesData.deadline), "days").format("DD.MM.YYYY")} <span className="text-zinc-500 bg-zinc-200 dark:bg-zinc-800 px-1 rounded-sm">{moment(salesData.date).add(Number(salesData.deadline), "days").diff(moment(), "days") < 0 && 0} </span>
+                {deadlineDate.format("DD.MM.YYYY")} <span className="text-zinc-500 bg-zinc-200 dark:bg-zinc-800 px-1 rounded-sm">{daysLeft} </span>
               </div>
             </div>
           </div>
@@ -243,7 +224,7 @@ export default function SalePage() {
               ))}
             </div>
           </div>
-          <SaleEditDialog dialog={saleEditDialog} trigger={setSaleEditDialog} data={salesData} />
+          <SaleEditDialog dialog={saleEditDialog} trigger={setSaleEditDialog} data={salesData} fetchSalesData={fetchSalesData} />
         </>
       )}
     </div>

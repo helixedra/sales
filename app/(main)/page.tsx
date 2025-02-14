@@ -2,43 +2,35 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
+import { Order } from "@/interfaces/order";
+import { Sale } from "@/interfaces/sale";
 import Status from "@/components/shared/status";
-import Link from "next/link";
-import ui from "@/app/data/ui.json";
-import { PulseLoader } from "react-spinners";
-import moment from "moment";
 import { Input } from "@/components/ui/input";
 import { RiSearchLine, RiAddFill } from "react-icons/ri";
 import statuses from "@/lib/status";
 import Loader from "@/components/shared/loader";
+import ui from "@/app/data/ui.json";
+import Link from "next/link";
+import moment from "moment";
 
 export default function Home() {
-  const [salesData, setSalesData] = useState<any[]>([]);
+  const [salesData, setSalesData] = useState<Sale[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const router = useRouter();
 
-  useEffect(() => {
-    async function fetchSalesData() {
-      const response = await fetch("/api/sales");
-      const data = await response.json();
-      setSalesData(data);
-    }
-
-    fetchSalesData();
+  async function fetchSalesData() {
+    setIsLoading(true);
+    const response = await fetch("/api/sales");
+    const data = await response.json();
+    setSalesData(data);
     setIsLoading(false);
-  }, []);
-
-  interface Order {
-    order_id: number;
-    created: string;
-    description: string;
-    qty: number;
-    price: number;
-    order_sum: number;
-    order_dis: number;
   }
+
+  useEffect(() => {
+    fetchSalesData();
+  }, []);
 
   return (
     <>
@@ -60,14 +52,14 @@ export default function Home() {
 
           <div className="TableContainer p-4">
             <div className="TableHeader flex gap-4 py-2 px-4 justify-between items-center text-zinc-500 text-sm border-b border-zinc-100 dark:border-zinc-800 font-[600] sticky top-0 z-10">
-              <div className="w-[5%] max-w-[60px] truncate whitespace-nowrap overflow-hidden text-nowrap">{ui.sales_table.num}</div>
-              <div className="w-[5%] truncate whitespace-nowrap overflow-hidden text-nowrap">{ui.sales_table.date}</div>
-              <div className="w-[5%] truncate whitespace-nowrap overflow-hidden text-nowrap">{ui.sales_table.status}</div>
-              <div className="w-[10%] truncate whitespace-nowrap overflow-hidden text-nowrap">{ui.sales_table.customer}</div>
-              <div className="w-[35%] truncate whitespace-nowrap overflow-hidden text-nowrap">{ui.sales_table.order}</div>
-              <div className="w-[5%] truncate whitespace-nowrap overflow-hidden text-nowrap">{ui.sales_table.total}</div>
-              <div className="w-[5%] truncate whitespace-nowrap overflow-hidden text-nowrap">{ui.sales_table.left}</div>
-              <div className="w-[5%] truncate whitespace-nowrap overflow-hidden text-nowrap">{ui.sales_table.deadline}</div>
+              <div className="w-[5%] max-w-[60px] cutLine">{ui.sales_table.num}</div>
+              <div className="w-[5%] cutLine">{ui.sales_table.date}</div>
+              <div className="w-[5%] cutLine">{ui.sales_table.status}</div>
+              <div className="w-[10%] cutLine">{ui.sales_table.customer}</div>
+              <div className="w-[35%] cutLine">{ui.sales_table.order}</div>
+              <div className="w-[5%] cutLine">{ui.sales_table.total}</div>
+              <div className="w-[5%] cutLine">{ui.sales_table.left}</div>
+              <div className="w-[5%] cutLine">{ui.sales_table.deadline}</div>
               <div className="w-[5%] truncate whitespace-nowrap overflow-hidden text-center text-nowrap">{ui.sales_table.days_left}</div>
             </div>
             <div>
@@ -79,7 +71,7 @@ export default function Home() {
                     <div className="w-[5%] text-sm">
                       <Status status={sale.status} name={statuses[sale.status].name} />
                     </div>
-                    <div className="w-[10%] truncate whitespace-nowrap overflow-hidden text-nowrap">{sale.client}</div>
+                    <div className="w-[10%] cutLine">{sale.client}</div>
                     <div className="w-[35%]">
                       <div className="flex items-center">
                         {sale.orders.map((order: Order) => (
