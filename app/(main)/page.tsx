@@ -1,6 +1,5 @@
 "use client";
 import axios from "axios";
-import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Order } from "@/app/types/order";
@@ -13,28 +12,18 @@ import Loader from "@/components/shared/loader";
 import ui from "@/app/data/ui.json";
 import Link from "next/link";
 import moment from "moment";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Home() {
-  const [salesData, setSalesData] = useState<Sale[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
   const router = useRouter();
 
-  async function fetchSalesData() {
-    setIsLoading(true);
-    try {
+  const { isLoading, data: salesData = [] } = useQuery({
+    queryKey: ["salesData"],
+    queryFn: async () => {
       const response = await axios.get("/api/sales");
-      setSalesData(response.data);
-    } catch (error) {
-      console.error("Error fetching sales data:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    fetchSalesData();
-  }, []);
+      return response.data;
+    },
+  });
 
   return (
     <>
@@ -67,7 +56,7 @@ export default function Home() {
               <div className="w-[5%] truncate whitespace-nowrap overflow-hidden text-center text-nowrap">{ui.sales_table.days_left}</div>
             </div>
             <div>
-              {salesData.map((sale) => (
+              {salesData.map((sale: Sale) => (
                 <Link href={`/sales/${sale.number}`} key={sale.id}>
                   <div className="TableRow flex gap-4 py-4 px-4 justify-between items-center border-b border-zinc-100 dark:border-zinc-800 cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-900">
                     <div className="w-[5%] max-w-[60px]">{sale.number}</div>

@@ -3,10 +3,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useEffect } from "react";
 import axios from "axios";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 type FormValues = {
   comment: string;
@@ -28,18 +28,22 @@ export default function CommentDialog({ dialog, trigger, data, fetchSalesData }:
     }
   }, [data, reset]);
 
-  const onSubmit: SubmitHandler<FormValues> = async (formData) => {
-    try {
-      const response = await axios.post("/api/sales/update/comment", formData);
-      if (response.status === 200) {
-        trigger();
-        fetchSalesData();
-      } else {
-        console.error("Error updating comment");
-      }
-    } catch (error) {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: async (formData: any) => axios.post("/api/sales/update/comment", formData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["salesData"] });
+      trigger();
+      fetchSalesData();
+    },
+    onError: (error: any) => {
       console.error("Error updating comment:", error);
-    }
+    },
+  });
+
+  const onSubmit: SubmitHandler<FormValues> = (formData) => {
+    mutation.mutate(formData);
   };
 
   return (

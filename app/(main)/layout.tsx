@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { Metadata } from "next";
 import "../globals.css";
 import Header from "@/components/layout/header";
@@ -15,6 +16,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const [theme, setTheme] = useState("dark");
+  const queryClient = new QueryClient();
 
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
@@ -38,12 +40,13 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" className={theme}>
-      <body>
-        <Header themeToggler={toggleTheme} theme={theme} />
-
-        {children}
-      </body>
-    </html>
+    <QueryClientProvider client={queryClient}>
+      <html lang="en" className={theme}>
+        <body>
+          <Header themeToggler={toggleTheme} theme={theme} />
+          {children}
+        </body>
+      </html>
+    </QueryClientProvider>
   );
 }

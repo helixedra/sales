@@ -6,16 +6,8 @@ import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { useForm, SubmitHandler, useWatch } from "react-hook-form";
 import moment from "moment";
-
-type FormValues = {
-  number: number;
-  client: string;
-  email: string;
-  tel: string;
-  address: string;
-  deadline: number;
-  prepay: number;
-};
+import { Sale } from "@/app/types/sale";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export default function SaleEditDialog({ dialog, trigger, data, fetchSalesData }: { dialog: any; trigger: any; data: any; fetchSalesData: () => void }) {
   const {
@@ -23,7 +15,7 @@ export default function SaleEditDialog({ dialog, trigger, data, fetchSalesData }
     handleSubmit,
     formState: { errors },
     control,
-  } = useForm<FormValues>({
+  } = useForm<Sale>({
     defaultValues: data,
   });
 
@@ -33,19 +25,22 @@ export default function SaleEditDialog({ dialog, trigger, data, fetchSalesData }
     defaultValue: data.deadline,
   });
 
-  const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    const formData = { ...data, number: data.number };
-    try {
-      const response = await axios.post("/api/sales/update/sale-info", formData);
-      if (response.status === 200) {
-        trigger();
-        fetchSalesData();
-      } else {
-        console.error("Error updating sale");
-      }
-    } catch (error) {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: async (formData: Sale) => axios.post("/api/sales/update/sale-info", formData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["salesData"] });
+      trigger();
+      fetchSalesData();
+    },
+    onError: (error: any) => {
       console.error("Error updating sale:", error);
-    }
+    },
+  });
+
+  const onSubmit: SubmitHandler<Sale> = (formData) => {
+    mutation.mutate(formData);
   };
 
   return (

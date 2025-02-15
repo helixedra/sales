@@ -7,16 +7,12 @@ import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useEffect } from "react";
+import { Order } from "@/app/types/order";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-type FormValues = {
-  order_id: number;
-  description: string;
-  qty: number;
-  price: number;
-  order_sum: number;
-  order_dis: number;
+interface FormValues extends Order {
   discount: number;
-};
+}
 
 export default function OrderEditDialog({ dialog, trigger, data, fetchSalesData }: { dialog: any; trigger: any; data: any; fetchSalesData: () => void }) {
   const {
@@ -54,18 +50,25 @@ export default function OrderEditDialog({ dialog, trigger, data, fetchSalesData 
     setValue("discount", discount);
   }, [watch("order_dis"), setValue]);
 
-  const onSubmit: SubmitHandler<FormValues> = async (formData) => {
-    try {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: async (formData: FormValues) => {
       const response = await axios.post("/api/sales/update/order", formData);
-      if (response.status === 200) {
-        trigger();
-        fetchSalesData();
-      } else {
-        console.error("Error updating order");
-      }
-    } catch (error) {
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["salesData"] });
+      trigger();
+      fetchSalesData();
+    },
+    onError: (error: any) => {
       console.error("Error updating order:", error);
-    }
+    },
+  });
+
+  const onSubmit: SubmitHandler<FormValues> = (formData) => {
+    mutation.mutate(formData);
   };
 
   return (
