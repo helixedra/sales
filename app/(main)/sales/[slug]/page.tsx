@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Image from "next/image";
 import { useParams } from "next/navigation";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import ui from "@/app/data/ui.json";
@@ -47,10 +48,11 @@ export default function SalePage() {
     queryFn: async () => {
       try {
         const response = await axios.get(`/api/sales/files/${slug}`);
+        console.log("Files data:", response);
         return response.data;
       } catch (error) {
         console.error("Error fetching files data:", error);
-        throw error;
+        return [];
       }
     },
   });
@@ -193,6 +195,23 @@ export default function SalePage() {
         </div>
       </div>
 
+      {filesData && filesData.length > 0 && (
+        <div className="filesBlock m-6 ">
+          <div className="flex flex-wrap gap-4">
+            {filesData.map((file: any) => (
+              <div className="flex flex-col truncate w-24" key={file.id}>
+                <a href={`/uploads/${file.filename}`} target="_blank" rel="noopener noreferrer">
+                  <div key={file.id} className="flex flex-col w-24 h-24">
+                    {file.filename.match(/\.(jpeg|jpg|gif|png)$/) ? <Image src={`/uploads/${file.filename}`} alt={file.filename} width={128} height={128} className="object-cover w-24 h-24" /> : <RiFileLine className="w-full h-full text-gray-500" />}
+                  </div>
+                  <div className="text-xs mt-2 truncate">{file.filename}</div>
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {salesData.comment && (
         <div className="commentBlock p-6 bg-orange-100 dark:bg-orange-950 text-orange-950 dark:text-orange-300 m-6 rounded-sm">
           <div className="flex min-h-10 justify-center">
@@ -245,17 +264,6 @@ export default function SalePage() {
                   <RiEditFill />
                 </Button>
               </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="filesBlock m-6 border border-zinc-200 dark:border-zinc-800 rounded-sm px-6">
-        <div className="flex flex-wrap gap-4">
-          {filesData.map((file: any) => (
-            <div key={file.id} className="flex flex-col items-center w-24 h-24 border border-zinc-200 dark:border-zinc-800 rounded-sm p-2">
-              {file.filename.match(/\.(jpeg|jpg|gif|png)$/) ? <img src={`/uploads/${file.filename}`} alt={file.filename} className="w-full h-full object-cover" /> : <RiFileLine className="w-full h-full text-gray-500" />}
-              <div className="text-xs mt-2">{file.filename}</div>
             </div>
           ))}
         </div>

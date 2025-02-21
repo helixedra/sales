@@ -10,7 +10,8 @@ export async function GET(request: Request, { params }: { params: { sale: string
     const files = stmt.all(sale);
 
     if (files.length === 0) {
-      return NextResponse.json({ error: "No files found for the given sale number" }, { status: 404 });
+      //   return NextResponse.json({ error: "No files found for the given sale number" }, { status: 404 });
+      return NextResponse.json({});
     }
 
     return NextResponse.json(files);
