@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import ui from "@/app/data/ui.json";
 import statuses from "@/app/types/status";
 import { Button } from "@/components/ui/button";
-import { RiBillLine, RiReceiptLine, RiMoneyDollarBoxLine, RiMessage2Fill, RiEditFill, RiCircleFill, RiChatNewLine } from "react-icons/ri";
+import { RiBillLine, RiReceiptLine, RiMoneyDollarBoxLine, RiMessage2Fill, RiEditFill, RiCircleFill, RiChatNewLine, RiUploadCloud2Line, RiFileLine } from "react-icons/ri";
 import moment from "moment";
 import Loader from "@/components/shared/loader";
 import SaleEditDialog from "./sale-edit-dialog";
@@ -15,6 +15,7 @@ import OrderEditDialog from "./order-edit-dialog";
 import CommentDialog from "./comment-dialog";
 import axios from "axios";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import UploadDialog from "./upload-dialog";
 
 export default function SalePage() {
   const queryClient = useQueryClient();
@@ -26,6 +27,7 @@ export default function SalePage() {
   const [orderEditDialog, setOrderEditDialog] = useState(false);
   const [orderInEdit, setOrderInEdit] = useState<Order | null>(null);
   const [commentDialog, setCommentDialog] = useState(false);
+  const [uploadDialog, setUploadDialog] = useState(false);
 
   const { isLoading, data: salesData } = useQuery({
     queryKey: ["salesData", slug],
@@ -40,7 +42,20 @@ export default function SalePage() {
     },
   });
 
-  if (isLoading) {
+  const { isLoading: isFilesLoading, data: filesData } = useQuery({
+    queryKey: ["filesData", slug],
+    queryFn: async () => {
+      try {
+        const response = await axios.get(`/api/sales/files/${slug}`);
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching files data:", error);
+        throw error;
+      }
+    },
+  });
+
+  if (isLoading || isFilesLoading) {
     return <Loader />;
   }
 
@@ -112,6 +127,10 @@ export default function SalePage() {
               {ui.global.add_comment}
             </Button>
           )}
+          <Button onClick={() => setUploadDialog(true)}>
+            <RiUploadCloud2Line />
+            {ui.global.uplod_files}
+          </Button>
           <Button>
             <RiReceiptLine />
             {ui.global.receipt}
@@ -230,9 +249,22 @@ export default function SalePage() {
           ))}
         </div>
       </div>
+
+      <div className="filesBlock m-6 border border-zinc-200 dark:border-zinc-800 rounded-sm px-6">
+        <div className="flex flex-wrap gap-4">
+          {filesData.map((file: any) => (
+            <div key={file.id} className="flex flex-col items-center w-24 h-24 border border-zinc-200 dark:border-zinc-800 rounded-sm p-2">
+              {file.filename.match(/\.(jpeg|jpg|gif|png)$/) ? <img src={`/uploads/${file.filename}`} alt={file.filename} className="w-full h-full object-cover" /> : <RiFileLine className="w-full h-full text-gray-500" />}
+              <div className="text-xs mt-2">{file.filename}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       <SaleEditDialog dialog={saleEditDialog} trigger={setSaleEditDialog} data={salesData} fetchSalesData={() => queryClient.invalidateQueries({ queryKey: ["salesData", slug] })} />
       <OrderEditDialog dialog={orderEditDialog} trigger={setOrderEditDialog} data={orderInEdit} fetchSalesData={() => queryClient.invalidateQueries({ queryKey: ["salesData", slug] })} />
       <CommentDialog dialog={commentDialog} trigger={setCommentDialog} data={{ number: salesData.number, comment: salesData.comment }} fetchSalesData={() => queryClient.invalidateQueries({ queryKey: ["salesData", slug] })} />
+      <UploadDialog dialog={uploadDialog} trigger={setUploadDialog} number={salesData.number} fetchSalesData={() => queryClient.invalidateQueries({ queryKey: ["filesData", slug] })} />
     </div>
   );
 }
