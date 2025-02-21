@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { Metadata } from "next";
 import "../globals.css";
 import Header from "@/components/layout/header";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 // export const metadata: Metadata = {
 //   title: "Home",
@@ -45,6 +46,7 @@ export default function RootLayout({
         <body>
           <Header themeToggler={toggleTheme} theme={theme} />
           {children}
+          <ReactQueryDevtools initialIsOpen={false} />
         </body>
       </html>
     </QueryClientProvider>

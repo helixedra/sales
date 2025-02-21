@@ -41,14 +41,15 @@ export default function UploadDialog({ dialog, trigger, fetchSalesData, number }
   const mutation = useMutation({
     mutationFn: async (formDataToSend: FormData) => {
       const response = await axios.post("/api/sales/upload", formDataToSend);
-      console.log("Upload response:", response.data);
+      //   console.log("Upload response:", response.data);
       return response.data;
     },
     onSuccess: (data) => {
-      console.log("Upload successful:", data);
+      //   console.log("Upload successful:", data);
       queryClient.invalidateQueries({ queryKey: ["filesData", number] });
       trigger();
       fetchSalesData();
+      handleClearForm();
     },
     onError: (error: any) => {
       console.error("Error uploading file:", error);
@@ -56,31 +57,31 @@ export default function UploadDialog({ dialog, trigger, fetchSalesData, number }
   });
 
   const onSubmit: SubmitHandler<FormValues> = async (formData) => {
-    console.log("Form data received:", formData);
+    // console.log("Form data received:", formData);
 
     const formDataToSend = new FormData();
 
     if (selectedFile) {
-      console.log("Adding file:", {
-        name: selectedFile.name,
-        type: selectedFile.type,
-        size: selectedFile.size,
-      });
+      //   console.log("Adding file:", {
+      //     name: selectedFile.name,
+      //     type: selectedFile.type,
+      //     size: selectedFile.size,
+      //   });
       formDataToSend.append("file", selectedFile);
     }
 
     if (formData.imageFromClipboard) {
-      console.log("Adding clipboard image");
+      //   console.log("Adding clipboard image");
       formDataToSend.append("imageFromClipboard", formData.imageFromClipboard);
     }
 
     formDataToSend.append("category", formData.category);
     formDataToSend.append("number", formData.number);
 
-    console.log("FormData entries before submission:", [...formDataToSend.entries()]);
+    // console.log("FormData entries before submission:", [...formDataToSend.entries()]);
 
     if ([...formDataToSend.entries()].length === 0) {
-      console.error("No file or image to upload");
+      //   console.error("No file or image to upload");
       return;
     }
 
@@ -88,11 +89,11 @@ export default function UploadDialog({ dialog, trigger, fetchSalesData, number }
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("File change event:", event.target.files?.[0]);
+    // console.log("File change event:", event.target.files?.[0]);
 
     const file = event.target.files?.[0];
     if (!file) {
-      console.error("No file selected");
+      //   console.error("No file selected");
       return;
     }
     if (file) {

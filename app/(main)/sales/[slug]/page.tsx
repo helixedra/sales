@@ -17,6 +17,9 @@ import CommentDialog from "./comment-dialog";
 import axios from "axios";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import UploadDialog from "./upload-dialog";
+import Files from "@/components/pages/sale/files";
+import Orders from "@/components/pages/sale/orders";
+import TopBar from "@/components/pages/sale/topbar";
 
 export default function SalePage() {
   const queryClient = useQueryClient();
@@ -48,7 +51,7 @@ export default function SalePage() {
     queryFn: async () => {
       try {
         const response = await axios.get(`/api/sales/files/${slug}`);
-        console.log("Files data:", response);
+        // console.log("Files data:", response);
         return response.data;
       } catch (error) {
         console.error("Error fetching files data:", error);
@@ -100,53 +103,7 @@ export default function SalePage() {
 
   return (
     <div>
-      <div className="topBar flex p-6 items-center">
-        <div className="flex items-center text-4xl mr-6 pr-6 border-r border-1  border-gray-200 dark:border-zinc-700 border-solid">
-          <div className="mr-4">№ {salesData.number}</div>
-          <div className="text-xl opacity-50">від {date}</div>
-        </div>
-        <div className={`status-${salesData.status} mr-4`}>
-          <RiCircleFill />
-        </div>
-        <div className="ml-2">
-          <Select value={salesData.status} onValueChange={handleStatusChange}>
-            <SelectTrigger className="w-[180px] dark:bg-zinc-800 bg-zinc-100 border border-zinc-200 dark:border-zinc-700 rounded-sm p-2">
-              <SelectValue className={`status-${salesData.status}`}>{statuses[salesData.status]?.name || salesData.status}</SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              {Object.keys(ui.status).map((status) => (
-                <SelectItem key={status} value={status} className={`status-${status}`}>
-                  {statuses[status].name || status}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="actionButtons ml-auto space-x-4">
-          {!salesData.comment && (
-            <Button onClick={() => setCommentDialog(true)} variant="outline" className="border border-solid text-orange-500 border-orange-500 bg-transparent hover:bg-orange-500 hover:text-white">
-              <RiChatNewLine />
-              {ui.global.add_comment}
-            </Button>
-          )}
-          <Button onClick={() => setUploadDialog(true)}>
-            <RiUploadCloud2Line />
-            {ui.global.uplod_files}
-          </Button>
-          <Button>
-            <RiReceiptLine />
-            {ui.global.receipt}
-          </Button>
-          <Button>
-            <RiBillLine />
-            {ui.global.request_form}
-          </Button>
-          <Button>
-            <RiMoneyDollarBoxLine />
-            {ui.global.invoice}
-          </Button>
-        </div>
-      </div>
+      <TopBar salesData={salesData} setCommentDialog={setCommentDialog} setUploadDialog={setUploadDialog} handleStatusChange={handleStatusChange} />
 
       <div className="orderInfo justify-between border border-zinc-200 dark:border-zinc-800 rounded-sm px-6 m-6">
         <div className="grid grid-cols-10 divide-x-1 text-left py-4 text-default dark:text-zinc-600 text-sm gap-8 items-center ">
@@ -195,22 +152,7 @@ export default function SalePage() {
         </div>
       </div>
 
-      {filesData && filesData.length > 0 && (
-        <div className="filesBlock m-6 ">
-          <div className="flex flex-wrap gap-4">
-            {filesData.map((file: any) => (
-              <div className="flex flex-col truncate w-24" key={file.id}>
-                <a href={`/uploads/${file.filename}`} target="_blank" rel="noopener noreferrer">
-                  <div key={file.id} className="flex flex-col w-24 h-24">
-                    {file.filename.match(/\.(jpeg|jpg|gif|png)$/) ? <Image src={`/uploads/${file.filename}`} alt={file.filename} width={128} height={128} className="object-cover w-24 h-24" /> : <RiFileLine className="w-full h-full text-gray-500" />}
-                  </div>
-                  <div className="text-xs mt-2 truncate">{file.filename}</div>
-                </a>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      {filesData && filesData.length > 0 && <Files data={filesData} />}
 
       {salesData.comment && (
         <div className="commentBlock p-6 bg-orange-100 dark:bg-orange-950 text-orange-950 dark:text-orange-300 m-6 rounded-sm">
@@ -228,46 +170,7 @@ export default function SalePage() {
         </div>
       )}
 
-      <div className="ordersBlock m-6 border border-zinc-200 dark:border-zinc-800 rounded-sm px-6">
-        <div className="flex flex-col">
-          <div className="flex text-left py-6 text-default dark:text-zinc-600 text-sm">
-            <div className="w-[10%]">{ui.order.order_number}</div>
-            <div className="flex-1">{ui.order.description}</div>
-            <div className="w-[5%]">{ui.order.qty}</div>
-            <div className="w-[10%]">{ui.order.price}</div>
-            <div className="w-[5%]">{ui.order.discount}</div>
-            <div className="w-[10%]">{ui.order.sum}</div>
-            <div className="w-[4%]"></div>
-          </div>
-          {salesData.orders.map((order: Order) => (
-            <div key={order.order_id} className="flex border-t border-zinc-200 dark:border-zinc-800 py-6 items-center">
-              <div className="w-[10%]">
-                {salesData.number}-{order.order_id}
-              </div>
-              <div className="flex-1">{order.description}</div>
-              <div className="w-[5%]">{order.qty}</div>
-              <div className="w-[10%]">
-                {order.price.toLocaleString("uk-UA", {
-                  style: "currency",
-                  currency: "UAH",
-                })}
-              </div>
-              <div className="w-[5%]">{order.order_dis}</div>
-              <div className="w-[10%]">
-                {order.order_sum.toLocaleString("uk-UA", {
-                  style: "currency",
-                  currency: "UAH",
-                })}
-              </div>
-              <div className="w-[4%] flex">
-                <Button className="ml-auto" variant={"outline"} onClick={() => handleOrderEditData(order.order_id)}>
-                  <RiEditFill />
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      <Orders data={salesData} handler={handleOrderEditData} />
 
       <SaleEditDialog dialog={saleEditDialog} trigger={setSaleEditDialog} data={salesData} fetchSalesData={() => queryClient.invalidateQueries({ queryKey: ["salesData", slug] })} />
       <OrderEditDialog dialog={orderEditDialog} trigger={setOrderEditDialog} data={orderInEdit} fetchSalesData={() => queryClient.invalidateQueries({ queryKey: ["salesData", slug] })} />
