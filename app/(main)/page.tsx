@@ -25,6 +25,8 @@ export default function Home() {
     },
   });
 
+  const newSaleNumber = salesData.length > 0 ? salesData[0].number + 1 : 1;
+
   return (
     <>
       {isLoading && <Loader />}
@@ -32,7 +34,7 @@ export default function Home() {
       {!isLoading && salesData && (
         <>
           <div className="topBar flex items-center p-6">
-            <Button variant="default" onClick={() => router.push("/sales/new")}>
+            <Button variant="default" onClick={() => router.push(`/sales/new?number=${newSaleNumber}`)}>
               <RiAddFill style={{ width: "24px", height: "24px" }} />
               {ui.global.add_new}
             </Button>
@@ -89,7 +91,7 @@ export default function Home() {
                       })}
                     </div>
                     <div className="w-[5%]">{moment(sale.date).add(Number(sale.deadline), "days").format("DD.MM.YYYY")}</div>
-                    <div className="w-[5%] text-center">{moment(sale.date).add(Number(sale.deadline), "days").diff(moment(), "days") < 0 && 0}</div>
+                    <div className="w-[5%] text-center">{moment(sale.date).add(Number(sale.deadline), "days").diff(moment(), "days") < 0 ? 0 : moment(sale.date).add(Number(sale.deadline), "days").diff(moment(), "days")}</div>
                   </div>
                 </Link>
               ))}
