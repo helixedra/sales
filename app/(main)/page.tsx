@@ -13,19 +13,86 @@ import ui from "@/app/data/ui.json";
 import Link from "next/link";
 import moment from "moment";
 import { useQuery } from "@tanstack/react-query";
+import { TopBar } from "@/components/pages/homepage/topbar";
+import { useState, useEffect, useRef, useCallback } from "react";
 
 export default function Home() {
   const router = useRouter();
+  const [salesData, setSalesData] = useState<Sale[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const { isLoading, data: salesData = [] } = useQuery({
+  const {
+    isLoading,
+    data: data = [],
+    error,
+  } = useQuery<Sale[]>({
     queryKey: ["salesData"],
     queryFn: async () => {
       const response = await axios.get("/api/sales");
+      if (response.status !== 200) {
+        throw new Error("Failed to fetch sales data");
+      }
       return response.data;
     },
   });
 
+  useEffect(() => {
+    if (data) {
+      setSalesData(data);
+    }
+  }, [!isLoading]);
+
   const newSaleNumber = salesData.length > 0 ? salesData[0].number + 1 : 1;
+
+  // The actual search logic
+  const performSearch = useCallback(
+    (query: string) => {
+      const trimmedQuery = query.trim();
+
+      if (trimmedQuery === "") {
+        setSalesData(data);
+        return;
+      }
+
+      const queryLower = trimmedQuery.toLowerCase();
+
+      const filteredSales = data.filter((sale: Sale) => {
+        const clientMatch = sale.client?.toLowerCase().includes(queryLower) || false;
+        const orderMatch = sale.orders.some((order: Order) => order.description?.toLowerCase().includes(queryLower) || false);
+        const numberMatch = sale.number?.toString().includes(trimmedQuery) || false;
+
+        return clientMatch || orderMatch || numberMatch;
+      });
+
+      setSalesData(filteredSales);
+    },
+    [data]
+  );
+
+  // The debounced search handler
+  function searchHandler(query: string) {
+    setSearchQuery(query);
+
+    // Clear any existing timeout
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    // Set a new timeout
+    searchTimeoutRef.current = setTimeout(() => {
+      performSearch(query);
+    }, 300);
+  }
+
+  // Clean up the timeout when the component unmounts
+  useEffect(() => {
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <>
@@ -33,17 +100,7 @@ export default function Home() {
 
       {!isLoading && salesData && (
         <>
-          <div className="topBar flex items-center p-6">
-            <Button variant="default" onClick={() => router.push(`/sales/new?number=${newSaleNumber}`)}>
-              <RiAddFill style={{ width: "24px", height: "24px" }} />
-              {ui.global.add_new}
-            </Button>
-
-            <div className="relative flex-1 ml-auto max-w-[300px]">
-              <RiSearchLine className="absolute left-3 top-3 h-4 w-4 text-zinc-400 " style={{ width: "16px", height: "16px" }} />
-              <Input type="search" placeholder="Search..." className="pl-10 pr-4 dark:bg-zinc-800 bg-zinc-100 border border-zinc-200 dark:border-zinc-700 rounded-sm" />
-            </div>
-          </div>
+          <TopBar newSaleNumber={newSaleNumber} searchHandler={searchHandler} />
 
           <div className="TableContainer p-4">
             <div className="TableHeader flex gap-4 py-2 px-4 justify-between items-center text-zinc-500 text-sm border-b border-zinc-100 dark:border-zinc-800 font-[600] sticky top-0 z-10">
