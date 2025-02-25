@@ -8,6 +8,7 @@ import { useForm, SubmitHandler, useWatch } from "react-hook-form";
 import moment from "moment";
 import { Sale } from "@/app/types/sale";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Description } from "@radix-ui/react-dialog";
 
 export default function SaleEditDialog({ dialog, trigger, data, fetchSalesData }: { dialog: any; trigger: any; data: any; fetchSalesData: () => void }) {
   const {
@@ -49,6 +50,7 @@ export default function SaleEditDialog({ dialog, trigger, data, fetchSalesData }
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Редагування замовлення</DialogTitle>
+          <Description />
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div style={{ paddingBottom: "1rem" }}>

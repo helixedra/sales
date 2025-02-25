@@ -9,12 +9,13 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { useEffect } from "react";
 import { Order } from "@/app/types/order";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Description } from "@radix-ui/react-dialog";
 
 interface FormValues extends Order {
   discount: number;
 }
 
-export default function OrderEditDialog({ dialog, trigger, data, fetchSalesData }: { dialog: any; trigger: any; data: any; fetchSalesData: () => void }) {
+export default function OrderEditDialog({ saleNumber, dialog, trigger, data, fetchSalesData }: { saleNumber: string | number; dialog: any; trigger: any; data: any; fetchSalesData: () => void }) {
   const {
     register,
     handleSubmit,
@@ -39,7 +40,7 @@ export default function OrderEditDialog({ dialog, trigger, data, fetchSalesData 
 
   useEffect(() => {
     const order_dis = discount / 100;
-    setValue("order_dis", order_dis);
+    setValue("order_dis", order_dis.toFixed(2));
     const order_sum = qty * price * (1 - order_dis);
     setValue("order_sum", order_sum);
   }, [qty, price, discount, setValue]);
@@ -54,8 +55,23 @@ export default function OrderEditDialog({ dialog, trigger, data, fetchSalesData 
 
   const mutation = useMutation({
     mutationFn: async (formData: FormValues) => {
-      const response = await axios.post("/api/sales/update/order", formData);
-      return response.data;
+      const parsedFormData = {
+        ...formData,
+        qty: Number(formData.qty),
+        price: Number(formData.price),
+        discount: Number(formData.discount),
+        order_dis: Number(formData.order_dis),
+        order_sum: Number(formData.order_sum),
+        number: saleNumber,
+      };
+
+      if (!parsedFormData.order_id) {
+        const response = await axios.post("/api/sales/add/order", parsedFormData);
+        return response.data;
+      } else {
+        const response = await axios.post("/api/sales/update/order", parsedFormData);
+        return response.data;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["salesData"] });
@@ -77,7 +93,9 @@ export default function OrderEditDialog({ dialog, trigger, data, fetchSalesData 
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Редагування замовлення</DialogTitle>
+          <Description />
         </DialogHeader>
+
         <form onSubmit={handleSubmit(onSubmit)}>
           <div style={{ paddingBottom: "1rem" }}>
             <Label>Опис виробу *</Label>

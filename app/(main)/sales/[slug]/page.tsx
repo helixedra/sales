@@ -75,7 +75,12 @@ export default function SalePage() {
   const payLeft = orderSum - salesData.prepay;
 
   function handleOrderEditData(id: number) {
-    setOrderInEdit(salesData.orders.find((order: Order) => order.order_id === id) || null);
+    if (id === 0) {
+      setOrderInEdit({ description: "", qty: 1, price: "", discount: 0, order_sum: 0, order_dis: 0, number: salesData.number });
+    } else {
+      setOrderInEdit(salesData.orders.find((order: Order) => order.order_id === id) || null);
+    }
+
     setOrderEditDialog(true);
   }
 
@@ -129,25 +134,25 @@ export default function SalePage() {
           <div className="pl-4">{salesData.email}</div>
           <div className="col-span-2 pl-4">{salesData.address}</div>
           <div className="pl-4">
-            {orderSum.toLocaleString("uk-UA", {
+            {orderSum?.toLocaleString("uk-UA", {
               style: "currency",
               currency: "UAH",
             })}
           </div>
           <div className="pl-4">
-            {salesData.prepay.toLocaleString("uk-UA", {
+            {salesData.prepay?.toLocaleString("uk-UA", {
               style: "currency",
               currency: "UAH",
             })}
           </div>
           <div className={payLeft > 0 ? "text-red-500 pl-4" : "pl-4"}>
-            {payLeft.toLocaleString("uk-UA", {
+            {payLeft?.toLocaleString("uk-UA", {
               style: "currency",
               currency: "UAH",
             })}
           </div>
           <div className="pl-4">
-            {deadlineDate.format("DD.MM.YYYY")} <span className="text-zinc-500 bg-zinc-200 dark:bg-zinc-800 px-1 rounded-sm">{daysLeft} </span>
+            {deadlineDate?.format("DD.MM.YYYY")} <span className="text-zinc-500 bg-zinc-200 dark:bg-zinc-800 px-1 rounded-sm">{daysLeft} </span>
           </div>
         </div>
       </div>
@@ -173,7 +178,7 @@ export default function SalePage() {
       <Orders data={salesData} handler={handleOrderEditData} />
 
       <SaleEditDialog dialog={saleEditDialog} trigger={setSaleEditDialog} data={salesData} fetchSalesData={() => queryClient.invalidateQueries({ queryKey: ["salesData", slug] })} />
-      <OrderEditDialog dialog={orderEditDialog} trigger={setOrderEditDialog} data={orderInEdit} fetchSalesData={() => queryClient.invalidateQueries({ queryKey: ["salesData", slug] })} />
+      <OrderEditDialog saleNumber={salesData.number} dialog={orderEditDialog} trigger={setOrderEditDialog} data={orderInEdit} fetchSalesData={() => queryClient.invalidateQueries({ queryKey: ["salesData", slug] })} />
       <CommentDialog dialog={commentDialog} trigger={setCommentDialog} data={{ number: salesData.number, comment: salesData.comment }} fetchSalesData={() => queryClient.invalidateQueries({ queryKey: ["salesData", slug] })} />
       <UploadDialog dialog={uploadDialog} trigger={setUploadDialog} number={salesData.number} fetchSalesData={() => queryClient.invalidateQueries({ queryKey: ["filesData", slug] })} />
     </div>

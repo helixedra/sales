@@ -24,17 +24,20 @@ export async function GET(request: Request, { params }: { params: { sale: string
           sales.deadline,
           sales.prepay,
           sales.comment,
-          json_group_array(
+          CASE
+            WHEN COUNT(orders.order_id) = 0 THEN '[]'
+            ELSE json_group_array(
               json_object(
-                  'order_id', orders.order_id,
-                  'created', orders.created,
-                  'description', orders.description,
-                  'qty', orders.qty,
-                  'price', orders.price,
-                  'order_sum', orders.order_sum,
-                  'order_dis', orders.order_dis
+                'order_id', orders.order_id,
+                'created', orders.created,
+                'description', orders.description,
+                'qty', orders.qty,
+                'price', orders.price,
+                'order_sum', orders.order_sum,
+                'order_dis', orders.order_dis
               )
-          ) AS orders
+            )
+          END AS orders
         FROM
           sales
         LEFT JOIN
