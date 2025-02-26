@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import ui from "@/app/data/ui.json";
 
 export default function Analytics() {
   // Fetch data from the API
@@ -62,7 +63,7 @@ export default function Analytics() {
 
   // Format number with commas and decimal points
   const formatNumber = (number) => {
-    return number.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return number.toLocaleString("uk-UA", { style: "currency", currency: "UAH" });
   };
 
   return (
@@ -78,7 +79,7 @@ export default function Analytics() {
               <div key={year} className="flex flex-col items-center mx-4">
                 <div className="font-bold mb-2">{year}</div>
                 <div className="w-12 bg-black dark:bg-zinc-400 mb-2 transition-all duration-500" style={{ height: `${barHeight}px` }}></div>
-                <div className="text-sm">{formatNumber(amount)} ₴</div>
+                <div className="text-sm">{formatNumber(amount)}</div>
               </div>
             );
           })}
@@ -86,16 +87,16 @@ export default function Analytics() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="border border-zinc-400 border-opacity-20 rounded-lg p-6">
-            <div className="text-gray-600 mb-2">Оборот за весь час</div>
-            <div className="text-xl font-bold">{formatNumber(total)} ₴</div>
+            <div className="text-gray-600 mb-2">{ui.global.total_turnover}</div>
+            <div className="text-xl font-bold">{formatNumber(total)}</div>
           </div>
           <div className="border border-zinc-400 border-opacity-20 rounded-lg p-6">
-            <div className="text-gray-600 mb-2">Виготовлених одиниць</div>
+            <div className="text-gray-600 mb-2">{ui.global.total_units}</div>
             <div className="text-xl font-bold">{qty} шт.</div>
           </div>
           <div className="border border-zinc-400 border-opacity-20 rounded-lg p-6">
-            <div className="text-gray-600 mb-2">Середній чек</div>
-            <div className="text-xl font-bold">{formatNumber(average)} ₴</div>
+            <div className="text-gray-600 mb-2">{ui.global.average_check}</div>
+            <div className="text-xl font-bold">{formatNumber(average)}</div>
           </div>
         </div>
       </main>

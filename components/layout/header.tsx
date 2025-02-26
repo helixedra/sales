@@ -22,7 +22,7 @@ export default function Header({ themeToggler, theme }: Readonly<{ themeToggler:
       <Link href="/analytics" className={buttonVariants({ variant: "link" })}>
         <RiBarChart2Fill style={{ width: "24px", height: "24px" }} /> {ui.mainmenu.analytics}
       </Link>
-      <Link href="/warehouse" className={buttonVariants({ variant: "link" })}>
+      <Link href="/inventory" className={buttonVariants({ variant: "link" })}>
         <RiHome6Fill style={{ width: "24px", height: "24px" }} /> {ui.mainmenu.warehouse}
       </Link>
 
