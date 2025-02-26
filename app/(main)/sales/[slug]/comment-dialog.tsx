@@ -7,6 +7,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { useEffect } from "react";
 import axios from "axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Description } from "@radix-ui/react-dialog";
 
 type FormValues = {
   comment: string;
@@ -52,6 +53,7 @@ export default function CommentDialog({ dialog, trigger, data, fetchSalesData }:
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Редагування коментаря</DialogTitle>
+          <Description />
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div style={{ paddingBottom: "1rem" }}>

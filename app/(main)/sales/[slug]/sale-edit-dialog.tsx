@@ -10,7 +10,7 @@ import { Sale } from "@/app/types/sale";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Description } from "@radix-ui/react-dialog";
 
-export default function SaleEditDialog({ dialog, trigger, data, fetchSalesData }: { dialog: any; trigger: any; data: any; fetchSalesData: () => void }) {
+export default function SaleEditDialog({ dialog, trigger, data, fetchSalesData }: { dialog: boolean; trigger: () => void; data: Sale; fetchSalesData: () => void }) {
   const {
     register,
     handleSubmit,
