@@ -46,7 +46,9 @@ export default function SaleEditDialog({ dialog, trigger, data, fetchSalesData }
 
   return (
     <Dialog open={dialog} onOpenChange={trigger}>
-      <DialogTrigger asChild>{trigger}</DialogTrigger>
+      <DialogTrigger asChild>
+        <Button onClick={trigger}>Open Dialog</Button>
+      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Редагування замовлення</DialogTitle>

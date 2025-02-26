@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import ui from "@/app/data/ui.json";
+import { Order } from "@/app/types/order";
 
 export default function Analytics() {
   // Fetch data from the API
@@ -21,7 +22,7 @@ export default function Analytics() {
   });
 
   // Calculate totals and metrics from data
-  const calculateMetrics = (ordersData) => {
+  const calculateMetrics = (ordersData: Order[]) => {
     // Calculate total
     const total = ordersData.reduce((acc, value) => {
       return acc + (value.price * value.qty - value.price * value.qty * value.order_dis);
@@ -39,8 +40,8 @@ export default function Analytics() {
   };
 
   // Group data by year
-  const groupByYear = (ordersData) => {
-    const sorted = {};
+  const groupByYear = (ordersData: Order[]) => {
+    const sorted: { [key: number]: Order[] } = {};
     ordersData.forEach((order) => {
       const year = new Date(order.created).getFullYear();
       if (!sorted[year]) {
@@ -52,8 +53,8 @@ export default function Analytics() {
   };
 
   // Calculate gross for a specific year's data
-  const calculateGross = (yearData) => {
-    return yearData.reduce((acc, value) => {
+  const calculateGross = (yearData: Order[]) => {
+    return yearData.reduce((acc: number, value: Order) => {
       return acc + (value.price * value.qty - value.price * value.qty * value.order_dis);
     }, 0);
   };
@@ -62,7 +63,7 @@ export default function Analytics() {
   const sortedByYear = groupByYear(ordersData);
 
   // Format number with commas and decimal points
-  const formatNumber = (number) => {
+  const formatNumber = (number: number) => {
     return number.toLocaleString("uk-UA", { style: "currency", currency: "UAH" });
   };
 
