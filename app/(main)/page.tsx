@@ -1,12 +1,8 @@
 "use client";
 import axios from "axios";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import { Order } from "@/app/types/order";
 import { Sale } from "@/app/types/sale";
 import Status from "@/components/shared/status";
-import { Input } from "@/components/ui/input";
-import { RiSearchLine, RiAddFill } from "react-icons/ri";
 import statuses from "@/app/types/status";
 import Loader from "@/components/shared/loader";
 import ui from "@/app/data/ui.json";
@@ -15,9 +11,12 @@ import moment from "moment";
 import { useQuery } from "@tanstack/react-query";
 import { TopBar } from "@/components/pages/homepage/topbar";
 import { useState, useEffect, useRef, useCallback } from "react";
+import { moneyFormat } from "@/lib/format";
+import clsx from "clsx";
+import "@/app/styles/homepage.css";
 
 export default function Home() {
-  const router = useRouter();
+  // const router = useRouter();
   const [salesData, setSalesData] = useState<Sale[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -25,7 +24,7 @@ export default function Home() {
   const {
     isLoading,
     data: data = [],
-    error,
+    // error,
   } = useQuery<Sale[]>({
     queryKey: ["salesData"],
     queryFn: async () => {
@@ -49,22 +48,17 @@ export default function Home() {
   const performSearch = useCallback(
     (query: string) => {
       const trimmedQuery = query.trim();
-
       if (trimmedQuery === "") {
         setSalesData(data);
         return;
       }
-
       const queryLower = trimmedQuery.toLowerCase();
-
       const filteredSales = data.filter((sale: Sale) => {
         const clientMatch = sale.client?.toLowerCase().includes(queryLower) || false;
         const orderMatch = sale.orders.some((order: Order) => order.description?.toLowerCase().includes(queryLower) || false);
         const numberMatch = sale.number?.toString().includes(trimmedQuery) || false;
-
         return clientMatch || orderMatch || numberMatch;
       });
-
       setSalesData(filteredSales);
     },
     [data]
@@ -94,6 +88,42 @@ export default function Home() {
     };
   }, []);
 
+  // Calculate the total amount
+  const orderTotal = (sale: Sale) => {
+    const number = sale.orders.reduce((acc, order) => acc + order.order_sum, 0);
+    return { number, currencyString: moneyFormat(number) };
+  };
+
+  // Calculate the remaining amount to be paid
+  const orderLeft = (sale: Sale) => {
+    const total = orderTotal(sale).number;
+    const number = total - sale.prepay;
+    return { number, currencyString: moneyFormat(number) };
+  };
+
+  // Calculate the deadline date
+  const orderDates = (sale: Sale) => {
+    const date = moment(sale.date);
+    const dateLocal = date.format("DD.MM.YYYY");
+    const deadlineDate = moment(sale.date).add(Number(sale.deadline), "days");
+    const deadlineLocalDate = deadlineDate.format("DD.MM.YYYY");
+    const deadlineDaysDiff = deadlineDate.diff(moment(), "days");
+    const deadlineDaysLeft = deadlineDaysDiff < 0 ? 0 : deadlineDaysDiff;
+    return { date, dateLocal, deadlineDate, deadlineDaysLeft, deadlineLocalDate };
+  };
+
+  const headers: { key: keyof typeof ui.sales_table; width: string }[] = [
+    { key: "num", width: "w-[5%] max-w-[60px]" },
+    { key: "date", width: "w-[5%]" },
+    { key: "status", width: "w-[5%]" },
+    { key: "customer", width: "w-[10%]" },
+    { key: "order", width: "w-[35%]" },
+    { key: "total", width: "w-[5%]" },
+    { key: "left", width: "w-[5%]" },
+    { key: "deadline", width: "w-[5%]" },
+    { key: "days_left", width: "w-[5%] text-center" },
+  ];
+
   return (
     <>
       {isLoading && <Loader />}
@@ -103,52 +133,35 @@ export default function Home() {
           <TopBar newSaleNumber={newSaleNumber} searchHandler={searchHandler} />
 
           <div className="TableContainer p-4">
-            <div className="TableHeader flex gap-4 py-2 px-4 justify-between items-center text-zinc-500 text-sm border-b border-zinc-100 dark:border-zinc-800 font-[600] sticky top-0 z-10">
-              <div className="w-[5%] max-w-[60px] cutLine">{ui.sales_table.num}</div>
-              <div className="w-[5%] cutLine">{ui.sales_table.date}</div>
-              <div className="w-[5%] cutLine">{ui.sales_table.status}</div>
-              <div className="w-[10%] cutLine">{ui.sales_table.customer}</div>
-              <div className="w-[35%] cutLine">{ui.sales_table.order}</div>
-              <div className="w-[5%] cutLine">{ui.sales_table.total}</div>
-              <div className="w-[5%] cutLine">{ui.sales_table.left}</div>
-              <div className="w-[5%] cutLine">{ui.sales_table.deadline}</div>
-              <div className="w-[5%] truncate whitespace-nowrap overflow-hidden text-center text-nowrap">{ui.sales_table.days_left}</div>
+            <div className="TableHeader">
+              {headers.map(({ key, width }) => (
+                <div key={key} className={clsx(width, "cutLine")}>
+                  {ui.sales_table[key]}
+                </div>
+              ))}
             </div>
+
             <div>
-              {salesData.map((sale: Sale) => (
-                <Link href={`/sales/${sale.number}`} key={sale.id}>
-                  <div className="TableRow flex gap-4 py-4 px-4 justify-between items-center border-b border-zinc-100 dark:border-zinc-800 cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-900">
+              {salesData.map((sale) => (
+                <Link key={sale.id} href={`/sales/${sale.number}`} className="block">
+                  <div className="TableRow">
                     <div className="w-[5%] max-w-[60px]">{sale.number}</div>
-                    <div className="w-[5%]">{moment(sale.date).format("DD.MM.YYYY")}</div>
+                    <div className="w-[5%]">{orderDates(sale).dateLocal}</div>
                     <div className="w-[5%] text-sm">
                       <Status status={sale.status} name={statuses[sale.status].name} />
                     </div>
                     <div className="w-[10%] cutLine">{sale.client}</div>
-                    <div className="w-[35%]">
-                      <div className="flex items-center">
-                        {sale.orders.map((order: Order) => (
-                          <div key={order.order_id} className="px-2 py-1 rounded-md bg-zinc-200 dark:bg-zinc-800 text-sm mx-1 truncate whitespace-nowrap overflow-hidden" title={order.description}>
-                            {order.description}
-                          </div>
-                        ))}
-                      </div>
+                    <div className="w-[35%] flex items-center">
+                      {sale.orders.map((order) => (
+                        <div key={order.order_id} className="OrderItem" title={order.description}>
+                          {order.description}
+                        </div>
+                      ))}
                     </div>
-                    <div className="w-[5%]">
-                      {sale.orders
-                        .reduce((acc: number, order: Order) => acc + order.order_sum, 0)
-                        .toLocaleString("uk-UA", {
-                          style: "currency",
-                          currency: "UAH",
-                        })}
-                    </div>
-                    <div className="w-[5%]">
-                      {(sale.orders.reduce((acc: number, order: Order) => acc + order.order_sum, 0) - sale.prepay).toLocaleString("uk-UA", {
-                        style: "currency",
-                        currency: "UAH",
-                      })}
-                    </div>
-                    <div className="w-[5%]">{moment(sale.date).add(Number(sale.deadline), "days").format("DD.MM.YYYY")}</div>
-                    <div className="w-[5%] text-center">{moment(sale.date).add(Number(sale.deadline), "days").diff(moment(), "days") < 0 ? 0 : moment(sale.date).add(Number(sale.deadline), "days").diff(moment(), "days")}</div>
+                    <div className="w-[5%]">{orderTotal(sale).currencyString}</div>
+                    <div className="w-[5%]">{orderLeft(sale).currencyString}</div>
+                    <div className="w-[5%]">{orderDates(sale).deadlineLocalDate}</div>
+                    <div className="w-[5%] text-center">{orderDates(sale).deadlineDaysLeft}</div>
                   </div>
                 </Link>
               ))}
