@@ -2,8 +2,8 @@
 import axios from "axios";
 import { Order } from "@/app/types/order";
 import { Sale } from "@/app/types/sale";
-import Status from "@/components/shared/status";
 import statuses from "@/app/types/status";
+import Status from "@/components/shared/status";
 import Loader from "@/components/shared/loader";
 import ui from "@/app/data/ui.json";
 import Link from "next/link";
