@@ -1,4 +1,4 @@
-import api from "./index";
+import api from './index';
 
 interface OrderData {
   id: number;
@@ -7,6 +7,12 @@ interface OrderData {
 }
 
 export const ordersService = {
+  // Get all orders
+  getAllOrders: async (): Promise<any> => {
+    const response = await api.get(`/orders`);
+    return response.data;
+  },
+
   // Get information about a specific order
   getOrderById: async (number: number): Promise<any> => {
     const response = await api.get(`/orders/${number}`);
@@ -20,20 +26,26 @@ export const ordersService = {
   },
 
   // Update order status
-  updateOrderStatus: async (data: { number: number; status: string }): Promise<any> => {
-    const response = await api.post("/orders/update/status", data);
+  updateOrderStatus: async (data: {
+    number: number;
+    status: string;
+  }): Promise<any> => {
+    const response = await api.post('/orders/update/status', data);
     return response.data;
   },
 
   // Update order data
   updateOrder: async (data: OrderData): Promise<any> => {
-    const response = await api.post("/orders/update", data);
+    const response = await api.post('/orders/update', data);
     return response.data;
   },
 
   // Update comment
-  updateComment: async (data: { id: number; comment: string }): Promise<any> => {
-    const response = await api.post("/orders/update/comment", data);
+  updateComment: async (data: {
+    id: number;
+    comment: string;
+  }): Promise<any> => {
+    const response = await api.post('/orders/update/comment', data);
     return response.data;
   },
 };
