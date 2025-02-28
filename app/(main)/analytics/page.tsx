@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import ui from "@/app/data/ui.json";
-import { Order } from "@/app/types/order";
+import { Order } from "@/app/types/item";
 
 export default function Analytics() {
   // Fetch data from the API
@@ -79,7 +79,10 @@ export default function Analytics() {
             return (
               <div key={year} className="flex flex-col items-center mx-4">
                 <div className="font-bold mb-2">{year}</div>
-                <div className="w-12 bg-black dark:bg-zinc-400 mb-2 transition-all duration-500" style={{ height: `${barHeight}px` }}></div>
+                <div
+                  className="w-12 bg-black dark:bg-zinc-400 mb-2 transition-all duration-500"
+                  style={{ height: `${barHeight}px` }}
+                ></div>
                 <div className="text-sm">{formatNumber(amount)}</div>
               </div>
             );

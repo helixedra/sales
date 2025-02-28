@@ -13,27 +13,24 @@ import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useEffect } from "react";
-import { Order } from "@/app/types/order";
+import { Item } from "@/app/types/item";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Description } from "@radix-ui/react-dialog";
+import ui from "@/app/data/ui.json";
 
-interface FormValues extends Order {
-  discount: number;
+interface FormValues extends Item {
+  _discount: number;
 }
 
-export function ItemDialog({
-  saleNumber,
-  dialog,
-  trigger,
-  data,
-  fetchSalesData,
-}: {
+interface ItemDialogProps {
   saleNumber: string | number;
   dialog: any;
   trigger: any;
   data: any;
   fetchSalesData: () => void;
-}) {
+}
+
+export function ItemDialog({ saleNumber, dialog, trigger, data, fetchSalesData }: ItemDialogProps) {
   const {
     register,
     handleSubmit,
@@ -48,26 +45,26 @@ export function ItemDialog({
   useEffect(() => {
     if (data) {
       reset(data);
-      setValue("discount", data.order_dis * 100);
+      setValue("_discount", data.discount * 100);
     }
   }, [data, reset, setValue]);
 
-  const qty = watch("qty");
+  const quantity = watch("quantity");
   const price = watch("price");
-  const discount = watch("discount");
+  const _discount = watch("_discount");
 
   useEffect(() => {
-    const order_dis = discount / 100;
-    setValue("order_dis", order_dis.toFixed(2));
-    const order_sum = Number(qty) * Number(price) * (1 - order_dis);
-    setValue("order_sum", order_sum);
-  }, [qty, price, discount, setValue]);
+    const discount = _discount / 100;
+    setValue("discount", discount.toFixed(2));
+    const total = Number(quantity) * Number(price) * (1 - discount);
+    setValue("total", total);
+  }, [quantity, price, _discount, setValue]);
 
   useEffect(() => {
-    const order_dis = watch("order_dis");
-    const discount = order_dis * 100;
-    setValue("discount", discount);
-  }, [watch("order_dis"), setValue]);
+    const discount = watch("discount");
+    const _discount = Number(discount) * 100;
+    setValue("_discount", _discount);
+  }, [watch("discount"), setValue]);
 
   const queryClient = useQueryClient();
 
@@ -75,19 +72,19 @@ export function ItemDialog({
     mutationFn: async (formData: FormValues) => {
       const parsedFormData = {
         ...formData,
-        qty: Number(formData.qty),
+        quantity: Number(formData.quantity),
         price: Number(formData.price),
+        _discount: Number(formData._discount),
         discount: Number(formData.discount),
-        order_dis: Number(formData.order_dis),
-        order_sum: Number(formData.order_sum),
+        total: Number(formData.total),
         number: saleNumber,
       };
 
-      if (!parsedFormData.order_id) {
-        const response = await axios.post("/api/sales/add/order", parsedFormData);
+      if (!parsedFormData.id) {
+        const response = await axios.post("/api/sales/add/Item", parsedFormData);
         return response.data;
       } else {
-        const response = await axios.post("/api/sales/update/order", parsedFormData);
+        const response = await axios.post("/api/sales/update/Item", parsedFormData);
         return response.data;
       }
     },
@@ -97,7 +94,7 @@ export function ItemDialog({
       fetchSalesData();
     },
     onError: (error: any) => {
-      console.error("Error updating order:", error);
+      console.error("Error updating Item:", error);
     },
   });
 
@@ -110,43 +107,43 @@ export function ItemDialog({
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Редагування замовлення</DialogTitle>
+          <DialogTitle>{ui.global.edit_order}</DialogTitle>
           <Description />
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <div style={{ paddingBottom: "1rem" }}>
-            <Label>Опис виробу *</Label>
+            <Label>{ui.global.item_description} *</Label>
             <Textarea {...register("description", { required: true })} />
-            {errors.description && <span>Поле обов'язкове</span>}
+            {errors.description && <span>{ui.global.field_required}</span>}
           </div>
           <div style={{ display: "flex", gap: "1rem", paddingBottom: "1rem" }}>
             <div style={{ flex: 1 }}>
-              <Label>Кількість *</Label>
-              <Input type="number" {...register("qty", { required: true })} />
-              {errors.qty && <span>Поле обов'язкове</span>}
+              <Label>{ui.global.quantity} *</Label>
+              <Input type="number" {...register("quantity", { required: true })} />
+              {errors.quantity && <span>{ui.global.field_required}</span>}
             </div>
             <div style={{ flex: 1 }}>
-              <Label>Ціна *</Label>
+              <Label>{ui.global.price} *</Label>
               <Input type="number" {...register("price", { required: true })} />
-              {errors.price && <span>Поле обов'язкове</span>}
+              {errors.price && <span>{ui.global.field_required}</span>}
             </div>
             <div style={{ flex: 1 }}>
-              <Label>Знижка (%)</Label>
+              <Label>{ui.global.discount_percentage}</Label>
               <Input
                 type="number"
-                {...register("discount", { required: true, min: 0, max: 100 })}
+                {...register("_discount", { required: true, min: 0, max: 100 })}
               />
-              {errors.discount && <span>Значення від 0 до 100</span>}
+              {errors._discount && <span>{ui.global.discount_range}</span>}
             </div>
             <div style={{ flex: 1 }}>
-              <Label>Сума</Label>
-              <Input type="number" {...register("order_sum", { required: true })} readOnly />
-              {errors.order_sum && <span>Поле обов'язкове</span>}
+              <Label>{ui.global.total}</Label>
+              <Input type="number" {...register("total", { required: true })} readOnly />
+              {errors.total && <span>{ui.global.field_required}</span>}
             </div>
           </div>
-          <input type="hidden" {...register("order_dis")} />
-          <Button type="submit">Зберегти</Button>
+          <input type="hidden" {...register("discount")} />
+          <Button type="submit">{ui.global.save}</Button>
         </form>
       </DialogContent>
     </Dialog>

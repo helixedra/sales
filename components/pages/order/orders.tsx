@@ -1,9 +1,9 @@
 "use client";
-import { Order } from "@/app/types/order";
+import { Order } from "@/app/types/item";
 import { RiEditFill, RiAddFill } from "react-icons/ri";
 import { Button } from "@/components/ui/button";
 import ui from "@/app/data/ui.json";
-import { Sale } from "@/app/types/sale";
+import { Sale } from "@/app/types/order";
 
 export function Orders({ data, handler }: { data: Sale; handler: any }) {
   return data.orders.length > 0 ? (

@@ -13,7 +13,7 @@ import axios from "axios";
 import { useForm, SubmitHandler, useWatch } from "react-hook-form";
 import { Dispatch, SetStateAction } from "react";
 import moment from "moment";
-import { Sale } from "@/app/types/sale";
+import { Sale } from "@/app/types/order";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Description } from "@radix-ui/react-dialog";
 

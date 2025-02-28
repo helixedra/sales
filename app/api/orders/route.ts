@@ -1,11 +1,12 @@
 //SELECT * FROM `sales`
 
-import { NextResponse } from 'next/server';
-import { db } from '@/utils/db';
+import { NextResponse } from "next/server";
+import { db } from "@/utils/db";
+import { Order } from "@/app/types/order";
 
 export async function GET() {
   try {
-    const salesData = db
+    const orders = db
       .prepare(
         `SELECT
         sales.id,
@@ -22,19 +23,19 @@ export async function GET() {
         sales.comment,
         json_group_array(
             json_object(
-                'order_id', orders.order_id,
-                'created', orders.created,
-                'description', orders.description,
-                'qty', orders.qty,
-                'price', orders.price,
-                'order_sum', orders.order_sum,
-                'order_dis', orders.order_dis
+                'id', items.id,
+                'created', items.created,
+                'description', items.description,
+                'quantity', items.quantity,
+                'price', items.price,
+                'total', items.total,
+                'discount', items.discount
             )
-        ) AS orders
+        ) AS items
 FROM
         sales
 LEFT JOIN
-        orders ON sales.number = orders.sales_number
+        items ON sales.number = items.order_number
 GROUP BY
         sales.id, sales.date, sales.status, sales.number, sales.client, sales.email, sales.tel, 
         sales.address, sales.delivery, sales.deadline, sales.prepay, sales.comment
@@ -44,22 +45,19 @@ ORDER BY
       )
       .all();
 
-    if (!salesData) {
-      return NextResponse.json({ error: 'Sales not found' }, { status: 404 });
+    if (!orders) {
+      return NextResponse.json({ error: "Sales not found" }, { status: 404 });
     }
 
-    salesData.forEach((sale: any) => {
-      if (typeof sale.orders === 'string') {
-        sale.orders = JSON.parse(sale.orders);
+    (orders as Order[]).forEach((order: Order) => {
+      if (typeof order.items === "string") {
+        order.items = JSON.parse(order.items);
       }
     });
 
-    return NextResponse.json(salesData);
+    return NextResponse.json(orders);
   } catch (error) {
-    console.error('Error fetching sale:', error);
-    return NextResponse.json(
-      { error: 'Internal Server Error' },
-      { status: 500 }
-    );
+    console.error("Error fetching sale:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

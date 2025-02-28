@@ -1,16 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import type { Metadata } from "next";
-import "@/app/styles/globals.css";
 import Header from "@/components/layout/header";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "@/components/ui/sonner";
-
-// export const metadata: Metadata = {
-//   title: "Home",
-//   description: "",
-// };
+import "@/app/styles/globals.css";
 
 export default function RootLayout({
   children,
@@ -42,15 +36,15 @@ export default function RootLayout({
   };
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <html lang="en" className={theme}>
-        <body>
+    <html lang="en" className={theme}>
+      <body>
+        <QueryClientProvider client={queryClient}>
           <Header themeToggler={toggleTheme} theme={theme} />
           {children}
           <Toaster />
           <ReactQueryDevtools initialIsOpen={false} />
-        </body>
-      </html>
-    </QueryClientProvider>
+        </QueryClientProvider>
+      </body>
+    </html>
   );
 }

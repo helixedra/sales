@@ -1,5 +1,5 @@
 import moment from "moment";
-import { Sale } from "@/app/types/sale";
+import { Order } from "@/app/types/order";
 
 type OrderDates = {
   dateLocal: string;
@@ -7,10 +7,10 @@ type OrderDates = {
   deadlineDaysLeft: number;
 };
 
-export const orderDates = (sale: Sale): OrderDates => {
-  const date = moment(sale.date);
+export const orderDates = (order: Order): OrderDates => {
+  const date = moment(order.date);
   const dateLocal = date.format("DD.MM.YYYY");
-  const deadlineDate = moment(sale.date).add(Number(sale.deadline), "days");
+  const deadlineDate = moment(order.date).add(Number(order.deadline), "days");
   const deadlineLocalDate = deadlineDate.format("DD.MM.YYYY");
   const deadlineDaysDiff = deadlineDate.diff(moment(), "days");
   const deadlineDaysLeft = deadlineDaysDiff < 0 ? 0 : deadlineDaysDiff;
