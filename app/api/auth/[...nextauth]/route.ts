@@ -2,7 +2,7 @@
 import NextAuth, { Session } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
-import { db } from "@/lib/db";
+import { db } from "@/utils/db";
 
 declare module "next-auth" {
   interface Session {
@@ -31,7 +31,12 @@ const handler = NextAuth({
         const { email, password } = credentials;
 
         // Get user from your database
-        const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email) as { id: string; email: string; name: string; password: string };
+        const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email) as {
+          id: string;
+          email: string;
+          name: string;
+          password: string;
+        };
 
         if (!user) {
           throw new Error("User not found");

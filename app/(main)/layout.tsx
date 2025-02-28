@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import "../globals.css";
 import Header from "@/components/layout/header";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { Toaster } from "@/components/ui/sonner";
 
 // export const metadata: Metadata = {
 //   title: "Home",
@@ -16,7 +17,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [theme, setTheme] = useState("dark");
+  const [theme, setTheme] = useState("light");
   const queryClient = new QueryClient();
 
   useEffect(() => {
@@ -46,6 +47,7 @@ export default function RootLayout({
         <body>
           <Header themeToggler={toggleTheme} theme={theme} />
           {children}
+          <Toaster />
           <ReactQueryDevtools initialIsOpen={false} />
         </body>
       </html>

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import ui from "@/app/data/ui.json";
 import { Sale } from "@/app/types/sale";
 
-export default function Orders({ data, handler }: { data: Sale; handler: any }) {
+export function Orders({ data, handler }: { data: Sale; handler: any }) {
   return data.orders.length > 0 ? (
     <>
       <div className="ordersBlock m-6 border border-zinc-200 dark:border-zinc-800 rounded-sm px-6">
@@ -20,7 +20,10 @@ export default function Orders({ data, handler }: { data: Sale; handler: any }) 
             <div className="w-[4%]"></div>
           </div>
           {data.orders?.map((order: Order) => (
-            <div key={order.order_id} className="flex border-t border-zinc-200 dark:border-zinc-800 py-6 items-center">
+            <div
+              key={order.order_id}
+              className="flex border-t border-zinc-200 dark:border-zinc-800 py-6 items-center"
+            >
               <div className="w-[10%]">
                 {data.number}-{order.order_id}
               </div>
@@ -40,7 +43,11 @@ export default function Orders({ data, handler }: { data: Sale; handler: any }) 
                 })}
               </div>
               <div className="w-[4%] flex">
-                <Button className="ml-auto" variant={"outline"} onClick={() => handler(order.order_id)}>
+                <Button
+                  className="ml-auto"
+                  variant={"outline"}
+                  onClick={() => handler(order.order_id)}
+                >
                   <RiEditFill />
                 </Button>
               </div>

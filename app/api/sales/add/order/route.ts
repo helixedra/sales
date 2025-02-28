@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { db } from "@/utils/db";
 
 export async function POST(request: Request) {
   try {
@@ -7,7 +7,9 @@ export async function POST(request: Request) {
 
     const { number, description, qty, price, discount, order_sum, order_dis } = body;
 
-    const stmt = db.prepare("INSERT INTO orders (description, qty, price, sales_number, order_sum, order_dis) VALUES (?, ?, ?, ?, ?, ?)");
+    const stmt = db.prepare(
+      "INSERT INTO orders (description, qty, price, sales_number, order_sum, order_dis) VALUES (?, ?, ?, ?, ?, ?)"
+    );
     const info = stmt.run(description, qty, price, number, order_sum, order_dis);
 
     return NextResponse.json({ message: "Sale added successfully" }, { status: 201 });

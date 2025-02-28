@@ -1,37 +1,71 @@
 "use client";
 import Link from "next/link";
-import { RiBox3Fill, RiBarChart2Fill, RiHome6Fill, RiLogoutBoxRFill, RiMoonFill, RiSunFill } from "react-icons/ri";
-import { Button, buttonVariants } from "@/components/ui/button";
-import styles from "./header.module.scss";
-import { signOut } from "next-auth/react";
-import ui from "@/app/data/ui.json";
 import { usePathname } from "next/navigation";
+import { signOut } from "next-auth/react";
+import {
+  RiBox3Fill,
+  RiBarChart2Fill,
+  RiHome6Fill,
+  RiLogoutBoxRFill,
+  RiMoonFill,
+  RiSunFill,
+} from "react-icons/ri";
+import { Button, buttonVariants } from "@/components/ui/button";
+import ui from "@/app/data/ui.json";
+import clsx from "clsx";
 
-export default function Header({ themeToggler, theme }: Readonly<{ themeToggler: () => void; theme: string }>) {
+const navLinks = [
+  { href: "/", label: ui.mainmenu.sales, icon: RiBox3Fill },
+  { href: "/analytics", label: ui.mainmenu.analytics, icon: RiBarChart2Fill },
+  { href: "/inventory", label: ui.mainmenu.warehouse, icon: RiHome6Fill },
+];
+
+const iconSize = { width: "24px", height: "24px" };
+
+export default function Header({
+  themeToggler,
+  theme,
+}: {
+  themeToggler: () => void;
+  theme: string;
+}) {
   const pathname = usePathname();
 
-  async function handleLogout() {
+  const handleLogout = async () => {
     await signOut({ redirect: true, callbackUrl: "/login" });
-  }
+  };
 
   return (
-    <header className={styles.header}>
-      <Link href="/" className={pathname === "/" ? buttonVariants({ variant: "link" }) + ` ${styles.active}` : buttonVariants({ variant: "link" })}>
-        <RiBox3Fill style={{ width: "24px", height: "24px" }} /> {ui.mainmenu.sales}
-      </Link>
-      <Link href="/analytics" className={buttonVariants({ variant: "link" })}>
-        <RiBarChart2Fill style={{ width: "24px", height: "24px" }} /> {ui.mainmenu.analytics}
-      </Link>
-      <Link href="/inventory" className={buttonVariants({ variant: "link" })}>
-        <RiHome6Fill style={{ width: "24px", height: "24px" }} /> {ui.mainmenu.warehouse}
-      </Link>
+    <header className="flex justify-between items-center space-x-4 p-2 bg-zinc-900 text-white">
+      <nav className="flex space-x-2">
+        {navLinks.map(({ href, label, icon: Icon }) => (
+          <Link
+            key={href}
+            href={href}
+            className={`text-white ${clsx(
+              buttonVariants({ variant: "link" }),
+              pathname === href && "bg-zinc-800"
+            )}`}
+          >
+            <Icon style={iconSize} /> {label}
+          </Link>
+        ))}
+      </nav>
 
-      <div className={styles.right}>
-        <Button variant={"link"} onClick={() => themeToggler()}>
-          {theme === "dark" ? <RiSunFill style={{ width: "24px", height: "24px" }} /> : <RiMoonFill style={{ width: "24px", height: "24px" }} />}
+      <div className="flex items-center space-x-2">
+        <Button
+          variant="link"
+          onClick={themeToggler}
+          className="text-white hover:opacity-75 transition-opacity duration-300"
+        >
+          {theme === "dark" ? <RiSunFill style={iconSize} /> : <RiMoonFill style={iconSize} />}
         </Button>
-        <Button variant={"link"} onClick={() => handleLogout()}>
-          <RiLogoutBoxRFill style={{ width: "24px", height: "24px" }} />
+        <Button
+          variant="link"
+          onClick={handleLogout}
+          className="text-white hover:opacity-75 transition-opacity duration-300"
+        >
+          <RiLogoutBoxRFill style={iconSize} />
         </Button>
       </div>
     </header>

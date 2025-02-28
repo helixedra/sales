@@ -45,19 +45,42 @@
 // );
 
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { db } from "@/utils/db";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { number, clientName, email, phone, address, term, prepayment, comment, orderItems } = body;
+    const { number, clientName, email, phone, address, term, prepayment, comment, orderItems } =
+      body;
 
-    const stmt = db.prepare("INSERT INTO sales (status, number, client, email, tel, address, delivery, deadline, prepay, comment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    const info = stmt.run("new", number, clientName, email, phone, address, "", term, prepayment, comment);
+    const stmt = db.prepare(
+      "INSERT INTO sales (status, number, client, email, tel, address, delivery, deadline, prepay, comment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    );
+    const info = stmt.run(
+      "new",
+      number,
+      clientName,
+      email,
+      phone,
+      address,
+      "",
+      term,
+      prepayment,
+      comment
+    );
 
-    const orderStmt = db.prepare("INSERT INTO orders (description, qty, price, sales_number, order_sum, order_dis) VALUES (?, ?, ?, ?, ?, ?)");
+    const orderStmt = db.prepare(
+      "INSERT INTO orders (description, qty, price, sales_number, order_sum, order_dis) VALUES (?, ?, ?, ?, ?, ?)"
+    );
     orderItems.forEach((item) => {
-      orderStmt.run(item.description, item.quantity, item.price, number, item.quantity * item.price, item.discount / 100);
+      orderStmt.run(
+        item.description,
+        item.quantity,
+        item.price,
+        number,
+        item.quantity * item.price,
+        item.discount / 100
+      );
     });
 
     return NextResponse.json({ message: "Sale added successfully" }, { status: 201 });

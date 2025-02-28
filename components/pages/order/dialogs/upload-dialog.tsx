@@ -1,5 +1,11 @@
 "use client";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -16,7 +22,17 @@ interface FormValues {
   number: string;
 }
 
-export default function UploadDialog({ dialog, trigger, fetchSalesData, number }: { dialog: any; trigger: any; fetchSalesData: () => void; number: string }) {
+export function UploadDialog({
+  dialog,
+  trigger,
+  fetchSalesData,
+  number,
+}: {
+  dialog: any;
+  trigger: any;
+  fetchSalesData: () => void;
+  number: string;
+}) {
   const {
     register,
     handleSubmit,
@@ -166,14 +182,22 @@ export default function UploadDialog({ dialog, trigger, fetchSalesData, number }
           {!file && !imageFromClipboard && (
             <div style={{ paddingBottom: "1rem" }}>
               <Label>Виберіть файл для завантаження *</Label>
-              <Input type="file" {...register("file", { required: !imageFromClipboard })} onChange={handleFileChange} />
+              <Input
+                type="file"
+                {...register("file", { required: !imageFromClipboard })}
+                onChange={handleFileChange}
+              />
               {errors.file && <span>Поле обов'язкове</span>}
             </div>
           )}
           {imagePreview && (
             <div style={{ paddingBottom: "1rem" }}>
               <Label>Попередній перегляд зображення</Label>
-              <img src={imagePreview} alt="Image Preview" style={{ maxWidth: "100%", height: "auto" }} />
+              <img
+                src={imagePreview}
+                alt="Image Preview"
+                style={{ maxWidth: "100%", height: "auto" }}
+              />
             </div>
           )}
           {!file && !imageFromClipboard && (

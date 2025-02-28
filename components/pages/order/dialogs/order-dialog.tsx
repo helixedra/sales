@@ -1,16 +1,33 @@
 "use client";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { useForm, SubmitHandler, useWatch } from "react-hook-form";
+import { Dispatch, SetStateAction } from "react";
 import moment from "moment";
 import { Sale } from "@/app/types/sale";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Description } from "@radix-ui/react-dialog";
 
-export default function SaleEditDialog({ dialog, trigger, data, fetchSalesData }: { dialog: boolean; trigger: () => void; data: Sale; fetchSalesData: () => void }) {
+export function OrderDialog({
+  dialog,
+  trigger,
+  data,
+  fetchSalesData,
+}: {
+  dialog: boolean;
+  trigger: () => void;
+  data: Sale;
+  fetchSalesData: () => void;
+}) {
   const {
     register,
     handleSubmit,
@@ -46,9 +63,7 @@ export default function SaleEditDialog({ dialog, trigger, data, fetchSalesData }
 
   return (
     <Dialog open={dialog} onOpenChange={trigger}>
-      <DialogTrigger asChild>
-        <Button onClick={trigger}>Open Dialog</Button>
-      </DialogTrigger>
+      <DialogTrigger asChild>{/* <Button onClick={trigger}>Open Dialog</Button> */}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Редагування замовлення</DialogTitle>
@@ -76,7 +91,9 @@ export default function SaleEditDialog({ dialog, trigger, data, fetchSalesData }
           <div style={{ paddingBottom: "1rem" }} className="relative">
             <Label>Термін (дні)</Label>
             <Input type="number" {...register("deadline")} />
-            <div className="absolute right-3 top-9 text-sm text-zinc-500">{moment(data.date).add(Number(deadline), "days").format("DD.MM.YYYY")}</div>
+            <div className="absolute right-3 top-9 text-sm text-zinc-500">
+              {moment(data.date).add(Number(deadline), "days").format("DD.MM.YYYY")}
+            </div>
           </div>
           <div style={{ paddingBottom: "1rem" }}>
             <Label>Передплата (грн)</Label>

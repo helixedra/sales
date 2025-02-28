@@ -1,5 +1,11 @@
 "use client";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -13,7 +19,17 @@ type FormValues = {
   comment: string;
 };
 
-export default function CommentDialog({ dialog, trigger, data, fetchSalesData }: { dialog: any; trigger: any; data: any; fetchSalesData: () => void }) {
+export function CommentDialog({
+  dialog,
+  trigger,
+  data,
+  fetchSalesData,
+}: {
+  dialog: any;
+  trigger: any;
+  data: any;
+  fetchSalesData: () => void;
+}) {
   const {
     register,
     handleSubmit,

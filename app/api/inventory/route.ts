@@ -1,6 +1,6 @@
 // pages/api/inventory.ts
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { db } from "@/utils/db";
 
 // Type for inventory item
 type InventoryItem = {
@@ -14,6 +14,10 @@ type InventoryItem = {
 };
 
 export async function GET() {
-  const items = db.prepare("SELECT id, category, name, thickness, length, width, note FROM inventory_items ORDER BY category, name").all();
+  const items = db
+    .prepare(
+      "SELECT id, category, name, thickness, length, width, note FROM inventory_items ORDER BY category, name"
+    )
+    .all();
   return NextResponse.json(items);
 }

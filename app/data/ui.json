@@ -44,7 +44,8 @@
     "selected": "Вибрано",
     "total_turnover": "Оборот за весь час",
     "total_units": "Виготовлених одиниць",
-    "average_check": "Середній чек"
+    "average_check": "Середній чек",
+    "nothing_found": "Нічого не знайдено за запитом"
   },
 
   "order": {

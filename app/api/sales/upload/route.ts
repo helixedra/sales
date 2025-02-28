@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 import sharp from "sharp";
-import { db } from "@/lib/db";
+import { db } from "@/utils/db";
 
 const uploadDir = path.join(process.cwd(), "public", "uploads");
 
@@ -71,12 +71,17 @@ export async function POST(request: Request) {
 
     if (!uploadedFileName) {
       console.log("No valid file or image found in request");
-      return NextResponse.json({ error: "No valid file or image found in request" }, { status: 400 });
+      return NextResponse.json(
+        { error: "No valid file or image found in request" },
+        { status: 400 }
+      );
     }
 
     // Insert the upload information into the database
     const timestamp = Date.now();
-    const stmt = db.prepare("INSERT INTO uploads (category, number, filename, timestamp) VALUES (?, ?, ?, ?)");
+    const stmt = db.prepare(
+      "INSERT INTO uploads (category, number, filename, timestamp) VALUES (?, ?, ?, ?)"
+    );
     stmt.run(category, number, uploadedFileName, timestamp);
 
     console.log("Upload information saved to database");
@@ -90,6 +95,9 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("Upload error:", error);
-    return NextResponse.json({ error: error instanceof Error ? error.message : "Upload failed" }, { status: 500 });
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Upload failed" },
+      { status: 500 }
+    );
   }
 }

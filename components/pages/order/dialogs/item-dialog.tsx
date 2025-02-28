@@ -1,5 +1,11 @@
 "use client";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,7 +21,19 @@ interface FormValues extends Order {
   discount: number;
 }
 
-export default function OrderEditDialog({ saleNumber, dialog, trigger, data, fetchSalesData }: { saleNumber: string | number; dialog: any; trigger: any; data: any; fetchSalesData: () => void }) {
+export function ItemDialog({
+  saleNumber,
+  dialog,
+  trigger,
+  data,
+  fetchSalesData,
+}: {
+  saleNumber: string | number;
+  dialog: any;
+  trigger: any;
+  data: any;
+  fetchSalesData: () => void;
+}) {
   const {
     register,
     handleSubmit,
@@ -41,7 +59,7 @@ export default function OrderEditDialog({ saleNumber, dialog, trigger, data, fet
   useEffect(() => {
     const order_dis = discount / 100;
     setValue("order_dis", order_dis.toFixed(2));
-    const order_sum = qty * price * (1 - order_dis);
+    const order_sum = Number(qty) * Number(price) * (1 - order_dis);
     setValue("order_sum", order_sum);
   }, [qty, price, discount, setValue]);
 
@@ -115,7 +133,10 @@ export default function OrderEditDialog({ saleNumber, dialog, trigger, data, fet
             </div>
             <div style={{ flex: 1 }}>
               <Label>Знижка (%)</Label>
-              <Input type="number" {...register("discount", { required: true, min: 0, max: 100 })} />
+              <Input
+                type="number"
+                {...register("discount", { required: true, min: 0, max: 100 })}
+              />
               {errors.discount && <span>Значення від 0 до 100</span>}
             </div>
             <div style={{ flex: 1 }}>

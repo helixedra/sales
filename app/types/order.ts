@@ -1,9 +1,11 @@
 export interface Order {
-  order_id: number;
-  created: string;
+  order_id: number | null;
+  // created: string;
   description: string;
-  qty: number;
-  price: number;
-  order_sum: number;
-  order_dis: number;
+  qty: number | string;
+  price: number | string;
+  order_sum: number | string;
+  order_dis: number | string;
+  discount: number | string;
+  number: number | string;
 }

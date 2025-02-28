@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { db } from "@/utils/db";
 
 export async function GET(request: Request, { params }: { params: { sale: string } }) {
   try {
@@ -17,6 +17,9 @@ export async function GET(request: Request, { params }: { params: { sale: string
     return NextResponse.json(files);
   } catch (error) {
     console.error("Error fetching files:", error);
-    return NextResponse.json({ error: error instanceof Error ? error.message : "Failed to fetch files" }, { status: 500 });
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Failed to fetch files" },
+      { status: 500 }
+    );
   }
 }

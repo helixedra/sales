@@ -44,3 +44,5 @@ __passgen
 
 public/uploads/*
 !public/uploads/.gitkeep
+
+*.sqlite
