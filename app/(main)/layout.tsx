@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { Metadata } from "next";
-import "../globals.css";
+import "@/app/styles/globals.css";
 import Header from "@/components/layout/header";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "@/components/ui/sonner";

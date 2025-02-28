@@ -162,20 +162,20 @@ export default function OrderPage() {
         dialog={dialogs.orderEdit}
         trigger={() => toggleDialog("saleEdit", !dialogs.orderEdit)}
         data={order}
-        fetchSalesData={() => queryClient.invalidateQueries({ queryKey: ["salesData", number] })}
+        fetchSalesData={() => queryClient.invalidateQueries({ queryKey: ["orders", number] })}
       />
       <ItemDialog
         saleNumber={order.number}
         dialog={dialogs.itemEdit}
         trigger={() => toggleDialog("itemEdit", !dialogs.itemEdit)}
         data={orderInEdit}
-        fetchSalesData={() => queryClient.invalidateQueries({ queryKey: ["salesData", number] })}
+        fetchSalesData={() => queryClient.invalidateQueries({ queryKey: ["orders", number] })}
       />
       <CommentDialog
         dialog={commentDialog}
         trigger={setCommentDialog}
         data={{ number: order.number, comment: order.comment }}
-        fetchSalesData={() => queryClient.invalidateQueries({ queryKey: ["salesData", number] })}
+        fetchSalesData={() => queryClient.invalidateQueries({ queryKey: ["orders", number] })}
       />
       <UploadDialog
         dialog={uploadDialog}
