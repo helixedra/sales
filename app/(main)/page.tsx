@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import axios from "axios";
-import moment from "moment";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
@@ -11,7 +10,6 @@ import statuses from "@/app/types/status";
 import Status from "@/components/shared/status";
 import Loader from "@/components/shared/loader";
 import { TopBar } from "@/components/pages/homepage/topbar";
-import { moneyFormat } from "@/utils/format";
 import ui from "@/app/data/ui.json";
 import { orderDates } from "@/utils/order-dates";
 import { orderTotal, orderLeft } from "@/utils/order-numbers";
@@ -36,11 +34,15 @@ const TABLE_HEADERS: { key: keyof typeof ui.sales_table; width: string }[] = [
 const SaleRow = ({ sale }: { sale: Sale }) => {
   return (
     <Link href={`/orders/${sale.number}`} className="block">
-      <div className="TableRow">
+      <div className={clsx({ "line-through opacity-30": sale.status === "canceled" }, "TableRow")}>
         <div className="w-[5%] max-w-[60px]">{sale.number}</div>
         <div className="w-[5%]">{orderDates(sale).dateLocal}</div>
         <div className="w-[5%] text-sm">
-          <Status status={sale.status} name={statuses[sale.status].name} />
+          <Status
+            status={sale.status}
+            name={statuses[sale.status].name}
+            className="opacity-100 no-line-through"
+          />
         </div>
         <div className="w-[10%] cutLine">{sale.client}</div>
         <div className="w-[35%] flex items-center">
