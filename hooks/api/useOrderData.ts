@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ordersService } from '@/services';
+import { itemsService, ordersService } from '@/services';
+import { Item } from '@/app/types/item';
 
 // Fetching all orders data
 export function useAllOrdersData() {
@@ -48,6 +49,36 @@ export function useUpdateComment() {
       ordersService.updateComment(data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['orders', variables.id] });
+    },
+  });
+}
+
+// Updating or create item
+export function useUpdateItem() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: Item) => {
+      if (!data.id) {
+        return itemsService.createItem(data);
+      } else {
+        return itemsService.updateItem(data);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['orders'] });
+    },
+  });
+}
+
+// Upload files
+export function useUploadFiles(number: number) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (formData: FormData) => ordersService.uploadFiles(formData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['files', number] });
     },
   });
 }

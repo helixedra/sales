@@ -1,8 +1,6 @@
-//SELECT * FROM `sales`
-
-import { NextResponse } from "next/server";
-import { db } from "@/utils/db";
-import { Order } from "@/app/types/order";
+import { NextResponse } from 'next/server';
+import { db } from '@/utils/db';
+import { Order } from '@/app/types/order';
 
 export async function GET() {
   try {
@@ -46,18 +44,21 @@ ORDER BY
       .all();
 
     if (!orders) {
-      return NextResponse.json({ error: "Sales not found" }, { status: 404 });
+      return NextResponse.json({ error: 'Sales not found' }, { status: 404 });
     }
 
     (orders as Order[]).forEach((order: Order) => {
-      if (typeof order.items === "string") {
+      if (typeof order.items === 'string') {
         order.items = JSON.parse(order.items);
       }
     });
 
     return NextResponse.json(orders);
   } catch (error) {
-    console.error("Error fetching sale:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    console.error('Error fetching sale:', error);
+    return NextResponse.json(
+      { error: 'Internal Server Error' },
+      { status: 500 }
+    );
   }
 }

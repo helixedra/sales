@@ -1,4 +1,5 @@
 import api from './index';
+import axios from 'axios';
 
 interface OrderData {
   id: number;
@@ -22,6 +23,16 @@ export const ordersService = {
   // Get files related to the order
   getOrderFiles: async (number: number): Promise<any> => {
     const response = await api.get(`/orders/files/${number}`);
+    return response.data;
+  },
+
+  // Upload files
+  uploadFiles: async (formData: FormData): Promise<any> => {
+    const response = await axios.post('/api/sales/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
     return response.data;
   },
 

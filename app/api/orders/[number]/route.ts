@@ -1,15 +1,21 @@
-import { NextResponse } from "next/server";
-import { db } from "@/utils/db";
+import { NextResponse } from 'next/server';
+import { db } from '@/utils/db';
 
-export async function GET(request: Request, { params }: { params: { number: string } }) {
+export async function GET(
+  request: Request,
+  { params }: { params: { number: string } }
+) {
   const { number } = await params;
 
   if (!number) {
-    return NextResponse.json({ error: "Sale number is required" }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Sale number is required' },
+      { status: 400 }
+    );
   }
 
   try {
-    const orderData = db
+    const order = db
       .prepare(
         `SELECT
           sales.id,
@@ -25,23 +31,23 @@ export async function GET(request: Request, { params }: { params: { number: stri
           sales.prepay,
           sales.comment,
           CASE
-            WHEN COUNT(orders.order_id) = 0 THEN '[]'
+            WHEN COUNT(items.id) = 0 THEN '[]'
             ELSE json_group_array(
               json_object(
-                'order_id', orders.order_id,
-                'created', orders.created,
-                'description', orders.description,
-                'qty', orders.qty,
-                'price', orders.price,
-                'order_sum', orders.order_sum,
-                'order_dis', orders.order_dis
+                'id', items.id,
+                'created', items.created,
+                'description', items.description,
+                'quantity', items.quantity,
+                'price', items.price,
+                'total', items.total,
+                'discount', items.discount
               )
             )
-          END AS orders
+          END AS items
         FROM
           sales
         LEFT JOIN
-          orders ON sales.number = orders.sales_number
+          items ON sales.number = items.order_number
         WHERE
           sales.number = ?
         GROUP BY
@@ -50,18 +56,21 @@ export async function GET(request: Request, { params }: { params: { number: stri
       )
       .get(number);
 
-    if (!orderData) {
-      return NextResponse.json({ error: "Sale not found" }, { status: 404 });
+    if (!order) {
+      return NextResponse.json({ error: 'Sale not found' }, { status: 404 });
     }
 
-    // If orders is returned as a JSON string, parse it
-    if (typeof (orderData as any).orders === "string") {
-      (orderData as any).orders = JSON.parse((orderData as any).orders);
+    // If items is returned as a JSON string, parse it
+    if (typeof (order as any).items === 'string') {
+      (order as any).items = JSON.parse((order as any).items);
     }
 
-    return NextResponse.json(orderData);
+    return NextResponse.json(order);
   } catch (error) {
-    console.error("Error fetching sale:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    console.error('Error fetching sale:', error);
+    return NextResponse.json(
+      { error: 'Internal Server Error' },
+      { status: 500 }
+    );
   }
 }

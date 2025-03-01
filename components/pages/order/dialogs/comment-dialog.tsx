@@ -1,19 +1,20 @@
-"use client";
+'use client';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { useEffect } from "react";
-import axios from "axios";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Description } from "@radix-ui/react-dialog";
+} from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { useEffect } from 'react';
+import axios from 'axios';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Description } from '@radix-ui/react-dialog';
+import ui from '@/app/data/ui.json';
 
 type FormValues = {
   comment: string;
@@ -48,14 +49,15 @@ export function CommentDialog({
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: async (formData: any) => axios.post("/api/sales/update/comment", formData),
+    mutationFn: async (formData: any) =>
+      axios.post('/api/sales/update/comment', formData),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["salesData"] });
+      queryClient.invalidateQueries({ queryKey: ['salesData'] });
       trigger();
       fetchSalesData();
     },
     onError: (error: any) => {
-      console.error("Error updating comment:", error);
+      console.error('Error updating comment:', error);
     },
   });
 
@@ -68,16 +70,16 @@ export function CommentDialog({
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Редагування коментаря</DialogTitle>
+          <DialogTitle>{ui.global.edit_comment}</DialogTitle>
           <Description />
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div style={{ paddingBottom: "1rem" }}>
-            <Label>Коментар</Label>
-            <Textarea {...register("comment")} />
-            {errors.comment && <span>Поле обов'язкове</span>}
+          <div style={{ paddingBottom: '1rem' }}>
+            <Label>{ui.global.comment}</Label>
+            <Textarea {...register('comment')} />
+            {errors.comment && <span>{ui.global.field_required}</span>}
           </div>
-          <Button type="submit">Зберегти</Button>
+          <Button type="submit">{ui.global.save}</Button>
         </form>
       </DialogContent>
     </Dialog>
