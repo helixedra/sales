@@ -1,19 +1,21 @@
-"use client";
+'use client';
+import { useState } from 'react';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { useUploadFiles } from '@/hooks/api/useOrderData';
+
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import axios from "axios";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
-import { Description } from "@radix-ui/react-dialog";
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { Description } from '@radix-ui/react-dialog';
+
+import ui from '@/app/data/ui.json';
 
 interface FormValues {
   file: FileList | null;
@@ -22,17 +24,22 @@ interface FormValues {
   number: string;
 }
 
+interface UploadDialogProps {
+  dialog: boolean;
+  trigger: () => void;
+  fetchSalesData: () => void;
+  number: string;
+}
+
 export function UploadDialog({
   dialog,
   trigger,
   fetchSalesData,
   number,
-}: {
-  dialog: any;
-  trigger: any;
-  fetchSalesData: () => void;
-  number: string;
-}) {
+}: UploadDialogProps) {
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
   const {
     register,
     handleSubmit,
@@ -44,177 +51,196 @@ export function UploadDialog({
     defaultValues: {
       file: null,
       imageFromClipboard: null,
-      category: "sale",
-      number: number,
+      category: 'sale',
+      number,
     },
   });
 
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const file = watch('file');
+  const imageFromClipboard = watch('imageFromClipboard');
+  const hasImage = !!file || !!imageFromClipboard;
 
-  const queryClient = useQueryClient();
+  const uploadMutation = useUploadFiles(Number(number));
 
-  const mutation = useMutation({
-    mutationFn: async (formDataToSend: FormData) => {
-      const response = await axios.post("/api/sales/upload", formDataToSend);
-      //   console.log("Upload response:", response.data);
-      return response.data;
-    },
-    onSuccess: (data) => {
-      //   console.log("Upload successful:", data);
-      queryClient.invalidateQueries({ queryKey: ["filesData", number] });
-      trigger();
-      fetchSalesData();
-      handleClearForm();
-    },
-    onError: (error: any) => {
-      console.error("Error uploading file:", error);
-    },
-  });
-
+  // Form submission handling
   const onSubmit: SubmitHandler<FormValues> = async (formData) => {
-    // console.log("Form data received:", formData);
-
     const formDataToSend = new FormData();
 
     if (selectedFile) {
-      //   console.log("Adding file:", {
-      //     name: selectedFile.name,
-      //     type: selectedFile.type,
-      //     size: selectedFile.size,
-      //   });
-      formDataToSend.append("file", selectedFile);
+      formDataToSend.append('file', selectedFile);
     }
 
     if (formData.imageFromClipboard) {
-      //   console.log("Adding clipboard image");
-      formDataToSend.append("imageFromClipboard", formData.imageFromClipboard);
+      formDataToSend.append('imageFromClipboard', formData.imageFromClipboard);
     }
 
-    formDataToSend.append("category", formData.category);
-    formDataToSend.append("number", formData.number);
+    formDataToSend.append('category', formData.category);
+    formDataToSend.append('number', formData.number);
 
-    // console.log("FormData entries before submission:", [...formDataToSend.entries()]);
-
-    if ([...formDataToSend.entries()].length === 0) {
-      //   console.error("No file or image to upload");
+    // Check if there is anything to upload
+    if (!selectedFile && !formData.imageFromClipboard) {
       return;
     }
 
-    mutation.mutate(formDataToSend);
-  };
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // console.log("File change event:", event.target.files?.[0]);
-
-    const file = event.target.files?.[0];
-    if (!file) {
-      //   console.error("No file selected");
-      return;
-    }
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setImagePreview(e.target?.result as string);
-        setSelectedFile(file);
-        setValue("imageFromClipboard", null, { shouldValidate: true });
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handlePaste = (event: React.ClipboardEvent) => {
-    const items = event.clipboardData.items;
-    for (const item of items) {
-      if (item.type.startsWith("image/")) {
-        const file = item.getAsFile();
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          setValue("imageFromClipboard", e.target?.result as string);
-          setImagePreview(e.target?.result as string);
-          setSelectedFile(null);
-        };
-        if (file) {
-          reader.readAsDataURL(file);
-        }
-      }
-    }
-  };
-
-  const handlePasteButtonClick = () => {
-    navigator.clipboard.read().then((items) => {
-      for (const item of items) {
-        if (item.types.includes("image/png")) {
-          item.getType("image/png").then((blob) => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-              setValue("imageFromClipboard", e.target?.result as string);
-              setImagePreview(e.target?.result as string);
-              setSelectedFile(null);
-            };
-            reader.readAsDataURL(blob);
-          });
-        }
-      }
+    uploadMutation.mutate(formDataToSend, {
+      onSuccess: () => {
+        trigger();
+        fetchSalesData();
+        handleClearForm();
+      },
     });
   };
 
+  // Handle file change through input
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    processImageFile(file);
+  };
+
+  // Handle pasting image from clipboard
+  const handlePaste = (event: React.ClipboardEvent) => {
+    const items = event.clipboardData.items;
+
+    for (const item of items) {
+      if (item.type.startsWith('image/')) {
+        const file = item.getAsFile();
+        if (file) {
+          processImageFile(file, true);
+          break;
+        }
+      }
+    }
+  };
+
+  // Function to read and process image file
+  const processImageFile = (file: File, isFromClipboard = false) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const result = e.target?.result as string;
+      setImagePreview(result);
+
+      if (isFromClipboard) {
+        setValue('imageFromClipboard', result);
+        setSelectedFile(null);
+        setValue('file', null);
+      } else {
+        setSelectedFile(file);
+        setValue('imageFromClipboard', null);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Handle paste button click
+  const handlePasteButtonClick = async () => {
+    try {
+      const clipboardItems = await navigator.clipboard.read();
+
+      for (const item of clipboardItems) {
+        if (
+          item.types.includes('image/png') ||
+          item.types.includes('image/jpeg')
+        ) {
+          const imageType =
+            item.types.find((type) => type.startsWith('image/')) || 'image/png';
+          const blob = await item.getType(imageType);
+          processImageFile(
+            new File([blob], 'clipboard-image.png', { type: imageType }),
+            true
+          );
+          break;
+        }
+      }
+    } catch (err) {
+      console.error('Failed to read clipboard contents:', err);
+    }
+  };
+
+  // Clear form
   const handleClearForm = () => {
-    reset();
+    reset({
+      file: null,
+      imageFromClipboard: null,
+      category: 'sale',
+      number,
+    });
     setImagePreview(null);
     setSelectedFile(null);
   };
 
-  const file = watch("file");
-  const imageFromClipboard = watch("imageFromClipboard");
-
   return (
     <Dialog open={dialog} onOpenChange={trigger}>
-      <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent onPaste={handlePaste}>
+      <DialogTrigger asChild></DialogTrigger>
+      <DialogContent onPaste={handlePaste} className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Завантаження файлів</DialogTitle>
+          <DialogTitle>{ui.global.upload_files}</DialogTitle>
           <Description />
         </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <input type="hidden" {...register("category")} value="sale" />
-          <input type="hidden" {...register("number")} value={number} />
-          {!file && !imageFromClipboard && (
-            <div style={{ paddingBottom: "1rem" }}>
-              <Label>Виберіть файл для завантаження *</Label>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <input type="hidden" {...register('category')} value="sale" />
+          <input type="hidden" {...register('number')} value={number} />
+
+          {!hasImage && (
+            <div className="space-y-2">
+              <Label htmlFor="file-upload">
+                {ui.global.select_file_to_upload} *
+              </Label>
               <Input
+                id="file-upload"
                 type="file"
-                {...register("file", { required: !imageFromClipboard })}
+                accept="image/*"
+                {...register('file', { required: !imageFromClipboard })}
                 onChange={handleFileChange}
+                className="cursor-pointer"
               />
-              {errors.file && <span>Поле обов'язкове</span>}
+              {errors.file && (
+                <span className="text-red-500 text-sm">
+                  {ui.global.field_required}
+                </span>
+              )}
             </div>
           )}
+
           {imagePreview && (
-            <div style={{ paddingBottom: "1rem" }}>
-              <Label>Попередній перегляд зображення</Label>
-              <img
-                src={imagePreview}
-                alt="Image Preview"
-                style={{ maxWidth: "100%", height: "auto" }}
-              />
+            <div className="space-y-2">
+              <Label>{ui.global.image_preview}</Label>
+              <div className="border rounded-md p-2 bg-gray-50">
+                <img
+                  src={imagePreview}
+                  alt="Image Preview"
+                  className="max-w-full h-auto mx-auto"
+                />
+              </div>
             </div>
           )}
-          {!file && !imageFromClipboard && (
-            <div style={{ display: "flex", gap: "1rem", paddingBottom: "1rem" }}>
-              <Button type="button" onClick={handlePasteButtonClick}>
-                Вставити з буфера
+
+          <div className="flex gap-2 justify-between">
+            {!hasImage && (
+              <Button
+                type="button"
+                onClick={handlePasteButtonClick}
+                variant="outline">
+                {ui.global.paste_from_clipboard}
               </Button>
-            </div>
-          )}
-          {(file || imageFromClipboard) && (
-            <div style={{ display: "flex", gap: "1rem", paddingBottom: "1rem" }}>
-              <Button type="button" onClick={handleClearForm}>
-                Очистити форму
+            )}
+
+            {hasImage && (
+              <Button type="button" onClick={handleClearForm} variant="outline">
+                {ui.global.clear_form}
               </Button>
-            </div>
-          )}
-          <Button type="submit">Завантажити</Button>
+            )}
+
+            <Button
+              type="submit"
+              disabled={!hasImage || uploadMutation.isPending}>
+              {uploadMutation.isPending
+                ? ui.global.uploading || 'Uploading...'
+                : ui.global.upload}
+            </Button>
+          </div>
         </form>
       </DialogContent>
     </Dialog>

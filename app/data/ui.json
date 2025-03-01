@@ -53,7 +53,20 @@
     "price": "Ціна",
     "discount_percentage": "Знижка (%)",
     "discount_range": "Значення від 0 до 100",
-    "total": "Сума"
+    "total": "Сума",
+    "customer_name": "Ім'я кліента",
+    "phone_required": "Телефон",
+    "deadline_days": "Термін (дні)",
+    "prepayment": "Передплата (грн)",
+    "upload_files": "Завантаження файлів",
+    "select_file_to_upload": "Виберіть файл для завантаження",
+    "image_preview": "Попередній перегляд зображення",
+    "paste_from_clipboard": "Вставити з буфера",
+    "clear_form": "Очистити форму",
+    "upload": "Завантажити",
+    "edit_comment": "Редагування коментаря",
+    "comment": "Коментар",
+    "uploading": "Завантаження..."
   },
 
   "order": {
