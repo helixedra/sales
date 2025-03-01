@@ -1,6 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { itemsService, ordersService } from '@/services';
 import { Item } from '@/app/types/item';
+import { Order } from '@/app/types/order';
+import { orderFormData } from '@/app/types/orderFormData';
 
 // Fetching all orders data
 export function useAllOrdersData() {
@@ -15,6 +17,18 @@ export function useOrderData(number: number) {
     queryKey: ['orders', number],
     queryFn: () => ordersService.getOrderById(number),
     enabled: !!number, // Query runs only if slug exists
+  });
+}
+
+// Updating order status
+export function useCreateOrder() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: orderFormData) => ordersService.createOrder(data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['orders'] });
+    },
   });
 }
 
@@ -45,10 +59,10 @@ export function useUpdateComment() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: { id: number; comment: string }) =>
+    mutationFn: (data: { number: number; comment: string }) =>
       ordersService.updateComment(data),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['orders', variables.id] });
+      queryClient.invalidateQueries({ queryKey: ['orders', variables.number] });
     },
   });
 }

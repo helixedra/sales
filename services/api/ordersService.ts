@@ -1,9 +1,13 @@
+import { Item } from '@/app/types/item';
 import api from './index';
 import axios from 'axios';
+import { Order } from '@/app/types/order';
+import { orderFormData } from '@/app/types/orderFormData';
 
 interface OrderData {
   id: number;
   status?: string;
+  number: number;
   comment?: string;
 }
 
@@ -20,6 +24,12 @@ export const ordersService = {
     return response.data;
   },
 
+  // Create a new order
+  createOrder: async (data: orderFormData): Promise<any> => {
+    const response = await api.post('/orders/create', data);
+    return response.data;
+  },
+
   // Get files related to the order
   getOrderFiles: async (number: number): Promise<any> => {
     const response = await api.get(`/orders/files/${number}`);
@@ -27,7 +37,7 @@ export const ordersService = {
   },
 
   // Upload files
-  uploadFiles: async (formData: FormData): Promise<any> => {
+  uploadFiles: async (formData: any): Promise<any> => {
     const response = await axios.post('/api/sales/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -53,7 +63,7 @@ export const ordersService = {
 
   // Update comment
   updateComment: async (data: {
-    id: number;
+    number: number;
     comment: string;
   }): Promise<any> => {
     const response = await api.post('/orders/update/comment', data);
