@@ -1,5 +1,5 @@
-import { Order } from "@/app/types/order";
-import { moneyFormat } from "./format";
+import { Order } from '@/app/types/order';
+import { moneyFormat } from './format';
 
 type OrderTotal = { number: number; currencyString: string };
 
@@ -11,6 +11,6 @@ export const orderTotal = (order: Order): OrderTotal => {
 // Calculate the amount left to pay by subtracting the prepay from the total
 export const orderLeft = (order: Order): OrderTotal => {
   const total = orderTotal(order).number;
-  const number = total - order.prepay;
+  const number = total - order.prepayment;
   return { number, currencyString: moneyFormat(number) };
 };

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/utils/db';
+import { Order } from '@/app/types/order';
 
 export async function GET(
   request: Request,
@@ -18,18 +19,18 @@ export async function GET(
     const order = db
       .prepare(
         `SELECT
-          sales.id,
-          sales.date,
-          sales.status,
-          sales.number,
-          sales.client,
-          sales.email,
-          sales.tel,
-          sales.address,
-          sales.delivery,
-          sales.deadline,
-          sales.prepay,
-          sales.comment,
+          orders.id,
+          orders.date,
+          orders.status,
+          orders.number,
+          orders.client,
+          orders.email,
+          orders.phone,
+          orders.address,
+          orders.delivery,
+          orders.deadline,
+          orders.prepayment,
+          orders.comment,
           CASE
             WHEN COUNT(items.id) = 0 THEN '[]'
             ELSE json_group_array(
@@ -45,14 +46,14 @@ export async function GET(
             )
           END AS items
         FROM
-          sales
+          orders
         LEFT JOIN
-          items ON sales.number = items.order_number
+          items ON orders.number = items.order_number
         WHERE
-          sales.number = ?
+          orders.number = ?
         GROUP BY
-          sales.id, sales.date, sales.status, sales.number, sales.client, sales.email, sales.tel, 
-          sales.address, sales.delivery, sales.deadline, sales.prepay, sales.comment`
+          orders.id, orders.date, orders.status, orders.number, orders.client, orders.email, orders.phone, 
+          orders.address, orders.delivery, orders.deadline, orders.prepayment, orders.comment`
       )
       .get(number);
 
@@ -61,8 +62,10 @@ export async function GET(
     }
 
     // If items is returned as a JSON string, parse it
-    if (typeof (order as any).items === 'string') {
-      (order as any).items = JSON.parse((order as any).items);
+    if (typeof (order as Order).items === 'string') {
+      (order as Order).items = JSON.parse(
+        (order as Order).items as unknown as string
+      );
     }
 
     return NextResponse.json(order);

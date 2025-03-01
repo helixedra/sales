@@ -7,39 +7,37 @@ export async function GET() {
     const orders = db
       .prepare(
         `SELECT
-        sales.id,
-        sales.date,
-        sales.status,
-        sales.number,
-        sales.client,
-        sales.email,
-        sales.tel,
-        sales.address,
-        sales.delivery,
-        sales.deadline,
-        sales.prepay,
-        sales.comment,
+        orders.id,
+        orders.date,
+        orders.status,
+        orders.number,
+        orders.client,
+        orders.email,
+        orders.phone,
+        orders.address,
+        orders.delivery,
+        orders.deadline,
+        orders.prepayment,
+        orders.comment,
         json_group_array(
-            json_object(
-                'id', items.id,
-                'created', items.created,
-                'description', items.description,
-                'quantity', items.quantity,
-                'price', items.price,
-                'total', items.total,
-                'discount', items.discount
-            )
+        json_object(
+          'id', items.id,
+          'created', items.created,
+          'description', items.description,
+          'quantity', items.quantity,
+          'price', items.price,
+          'total', items.total,
+          'discount', items.discount
+        )
         ) AS items
-FROM
-        sales
-LEFT JOIN
-        items ON sales.number = items.order_number
-GROUP BY
-        sales.id, sales.date, sales.status, sales.number, sales.client, sales.email, sales.tel, 
-        sales.address, sales.delivery, sales.deadline, sales.prepay, sales.comment
-ORDER BY
-        sales.number DESC;
-`
+      FROM
+        orders
+      LEFT JOIN
+        items ON orders.number = items.order_number
+      GROUP BY
+        orders.id
+      ORDER BY
+        orders.number DESC;`
       )
       .all();
 

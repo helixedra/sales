@@ -1,23 +1,31 @@
 'use client';
 import {
+  Textarea,
+  Label,
+  Button,
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
+} from '@/components/ui';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useEffect } from 'react';
-import axios from 'axios';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Description } from '@radix-ui/react-dialog';
+import { useUpdateComment } from '@/hooks/api/useOrderData';
+import { Order } from '@/app/types/order';
 import ui from '@/app/data/ui.json';
 
 type FormValues = {
+  number: number;
   comment: string;
+};
+
+type Props = {
+  dialog: boolean;
+  trigger: () => void;
+  data: Order;
+  fetchSalesData: () => void;
 };
 
 export function CommentDialog({
@@ -25,12 +33,8 @@ export function CommentDialog({
   trigger,
   data,
   fetchSalesData,
-}: {
-  dialog: any;
-  trigger: any;
-  data: any;
-  fetchSalesData: () => void;
-}) {
+}: Props) {
+  //Form initialization
   const {
     register,
     handleSubmit,
@@ -46,28 +50,17 @@ export function CommentDialog({
     }
   }, [data, reset]);
 
-  const queryClient = useQueryClient();
+  const mutation = useUpdateComment();
 
-  const mutation = useMutation({
-    mutationFn: async (formData: any) =>
-      axios.post('/api/sales/update/comment', formData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['salesData'] });
-      trigger();
-      fetchSalesData();
-    },
-    onError: (error: any) => {
-      console.error('Error updating comment:', error);
-    },
-  });
-
-  const onSubmit: SubmitHandler<FormValues> = (formData) => {
+  const onSubmit: SubmitHandler<FormValues> = (formData: FormValues) => {
     mutation.mutate(formData);
+    trigger();
+    fetchSalesData();
   };
 
   return (
     <Dialog open={dialog} onOpenChange={trigger}>
-      <DialogTrigger asChild>{trigger}</DialogTrigger>
+      <DialogTrigger asChild></DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{ui.global.edit_comment}</DialogTitle>

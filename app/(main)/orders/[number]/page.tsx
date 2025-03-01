@@ -36,9 +36,6 @@ export default function OrderPage() {
     upload: false,
   });
 
-  // const [commentDialog, setCommentDialog] = useState(false);
-  // const [uploadDialog, setUploadDialog] = useState(false);
-
   // Get order data
   const { isLoading, error, data: order } = useOrderData(Number(number));
 

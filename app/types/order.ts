@@ -1,4 +1,4 @@
-import { Item } from "./item";
+import { Item } from './item';
 
 export interface Order {
   id: number;
@@ -7,11 +7,11 @@ export interface Order {
   number: number;
   client: string;
   email: string;
-  tel: string;
+  phone: string;
   address: string;
   delivery: string;
   deadline: number;
-  prepay: number;
+  prepayment: number;
   comment: string;
   items: Item[];
 }
