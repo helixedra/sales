@@ -1,6 +1,6 @@
 import { Item } from "./item";
 
-export interface Order {
+export type Order = {
   id: number;
   created: string;
   date: string;
@@ -15,4 +15,4 @@ export interface Order {
   prepayment: number;
   comment: string;
   items: Item[];
-}
+};

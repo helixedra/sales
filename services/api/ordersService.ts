@@ -1,19 +1,18 @@
-import { Item } from '@/app/types/item';
-import api from './index';
-import axios from 'axios';
-import { Order } from '@/app/types/order';
-import { orderFormData } from '@/app/types/orderFormData';
+import api from "./index";
+import axios from "axios";
+import { orderFormData } from "@/app/types/orderFormData";
+import { Order } from "@/app/types/order";
 
-interface OrderData {
+type OrderData = {
   id: number;
   status?: string;
   number: number;
   comment?: string;
-}
+};
 
 export const ordersService = {
   // Get all orders
-  getAllOrders: async (): Promise<any> => {
+  getAllOrders: async (): Promise<Order[]> => {
     const response = await api.get(`/orders`);
     return response.data;
   },
@@ -26,7 +25,7 @@ export const ordersService = {
 
   // Create a new order
   createOrder: async (data: orderFormData): Promise<any> => {
-    const response = await api.post('/orders/create', data);
+    const response = await api.post("/orders/create", data);
     return response.data;
   },
 
@@ -38,35 +37,29 @@ export const ordersService = {
 
   // Upload files
   uploadFiles: async (formData: any): Promise<any> => {
-    const response = await axios.post('/api/sales/upload', formData, {
+    const response = await axios.post("/api/sales/upload", formData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        "Content-Type": "multipart/form-data",
       },
     });
     return response.data;
   },
 
   // Update order status
-  updateOrderStatus: async (data: {
-    number: number;
-    status: string;
-  }): Promise<any> => {
-    const response = await api.post('/orders/update/status', data);
+  updateOrderStatus: async (data: { number: number; status: string }): Promise<any> => {
+    const response = await api.post("/orders/update/status", data);
     return response.data;
   },
 
   // Update order data
   updateOrder: async (data: OrderData): Promise<any> => {
-    const response = await api.post('/orders/update', data);
+    const response = await api.post("/orders/update", data);
     return response.data;
   },
 
   // Update comment
-  updateComment: async (data: {
-    number: number;
-    comment: string;
-  }): Promise<any> => {
-    const response = await api.post('/orders/update/comment', data);
+  updateComment: async (data: { number: number; comment: string }): Promise<any> => {
+    const response = await api.post("/orders/update/comment", data);
     return response.data;
   },
 };

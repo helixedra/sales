@@ -1,37 +1,37 @@
-'use client';
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import Link from 'next/link';
-import clsx from 'clsx';
-import { Item } from '@/app/types/item';
-import { Order } from '@/app/types/order';
-import statuses from '@/app/types/status';
-import Status from '@/components/shared/status';
-import Loader from '@/components/shared/loader';
-import { TopBar } from '@/components/pages/homepage/topbar';
-import { orderDates } from '@/utils/order-dates';
-import { orderTotal, orderLeft } from '@/utils/order-numbers';
-import { useAllOrdersData } from '@/hooks/api/useOrderData';
-import ui from '@/app/data/ui.json';
+"use client";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import Link from "next/link";
+import clsx from "clsx";
+import { Item } from "@/app/types/item";
+import { Order } from "@/app/types/order";
+import statuses from "@/utils/status";
+import Status from "@/components/shared/status";
+import Loader from "@/components/shared/loader";
+import { TopBar } from "@/components/pages/homepage/topbar";
+import { orderDates } from "@/utils/order-dates";
+import { orderTotal, orderLeft } from "@/utils/order-numbers";
+import { useAllOrdersData } from "@/hooks/api/useOrderData";
+import ui from "@/app/data/ui.json";
 
 // Styles
-import '@/app/styles/homepage.css';
+import "@/app/styles/homepage.css";
 
 // Constants
 const TABLE_HEADERS: { key: keyof typeof ui.sales_table; width: string }[] = [
-  { key: 'num', width: 'w-[5%] max-w-[60px]' },
-  { key: 'date', width: 'w-[5%]' },
-  { key: 'status', width: 'w-[5%]' },
-  { key: 'customer', width: 'w-[10%]' },
-  { key: 'order', width: 'w-[35%]' },
-  { key: 'total', width: 'w-[5%]' },
-  { key: 'left', width: 'w-[5%]' },
-  { key: 'deadline', width: 'w-[5%]' },
-  { key: 'days_left', width: 'w-[5%] text-center' },
+  { key: "num", width: "w-[5%] max-w-[60px]" },
+  { key: "date", width: "w-[5%]" },
+  { key: "status", width: "w-[5%]" },
+  { key: "customer", width: "w-[10%]" },
+  { key: "order", width: "w-[35%]" },
+  { key: "total", width: "w-[5%]" },
+  { key: "left", width: "w-[5%]" },
+  { key: "deadline", width: "w-[5%]" },
+  { key: "days_left", width: "w-[5%] text-center" },
 ];
 
 const stylingCancel = (status: string) =>
   clsx({
-    'line-through opacity-40': status === 'canceled',
+    "line-through opacity-40": status === "canceled",
   });
 
 // Table row component
@@ -39,12 +39,8 @@ const OrderRow = ({ order }: { order: Order }) => {
   return (
     <Link href={`/orders/${order.number}`} className="block">
       <div className="TableRow">
-        <div className={`w-[5%] max-w-[60px] ${stylingCancel(order.status)}`}>
-          {order.number}
-        </div>
-        <div className={`w-[5%] ${stylingCancel(order.status)}`}>
-          {orderDates(order).dateLocal}
-        </div>
+        <div className={`w-[5%] max-w-[60px] ${stylingCancel(order.status)}`}>{order.number}</div>
+        <div className={`w-[5%] ${stylingCancel(order.status)}`}>{orderDates(order).dateLocal}</div>
         <div className="w-[5%] text-sm">
           <Status
             status={order.status}
@@ -52,13 +48,8 @@ const OrderRow = ({ order }: { order: Order }) => {
             className="opacity-100 no-line-through"
           />
         </div>
-        <div className={`w-[10%] cutLine ${stylingCancel(order.status)}`}>
-          {order.client}
-        </div>
-        <div
-          className={`w-[35%] flex items-center ${stylingCancel(
-            order.status
-          )}`}>
+        <div className={`w-[10%] cutLine ${stylingCancel(order.status)}`}>{order.client}</div>
+        <div className={`w-[35%] flex items-center ${stylingCancel(order.status)}`}>
           {order.items.map((item: Item) => (
             <div key={item.id} className="OrderItem" title={item.description}>
               {item.description}
@@ -86,7 +77,7 @@ const OrderRow = ({ order }: { order: Order }) => {
 const TableHeader = () => (
   <div className="TableHeader">
     {TABLE_HEADERS.map(({ key, width }) => (
-      <div key={key} className={clsx(width, 'cutLine')}>
+      <div key={key} className={clsx(width, "cutLine")}>
         {ui.sales_table[key]}
       </div>
     ))}
@@ -96,7 +87,7 @@ const TableHeader = () => (
 // Main page component
 export default function OrdersPage() {
   // State
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Getting data from API
@@ -111,9 +102,7 @@ export default function OrdersPage() {
     return orders.filter(
       (order: Order) =>
         order.client?.toLowerCase().includes(queryLower) ||
-        order.items.some((item: Item) =>
-          item.description?.toLowerCase().includes(queryLower)
-        ) ||
+        order.items.some((item: Item) => item.description?.toLowerCase().includes(queryLower)) ||
         order.number?.toString().includes(trimmedQuery)
     );
   }, [orders, searchQuery]);
@@ -142,7 +131,7 @@ export default function OrdersPage() {
 
   // Page title
   useEffect(() => {
-    document.title = ui.pages.orders + ' - ' + ui.pages.site_name;
+    document.title = ui.pages.orders + " - " + ui.pages.site_name;
   }, []);
 
   // Loader
@@ -164,9 +153,7 @@ export default function OrdersPage() {
               {ui.global.nothing_found} "{searchQuery}"
             </div>
           ) : (
-            filteredSales.map((order: Order) => (
-              <OrderRow key={order.id} order={order} />
-            ))
+            filteredSales.map((order: Order) => <OrderRow key={order.id} order={order} />)
           )}
         </div>
       </div>

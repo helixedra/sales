@@ -1,20 +1,20 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { itemsService, ordersService } from '@/services';
-import { Item } from '@/app/types/item';
-import { Order } from '@/app/types/order';
-import { orderFormData } from '@/app/types/orderFormData';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { itemsService, ordersService } from "@/services";
+import { Item } from "@/app/types/item";
+import { Order } from "@/app/types/order";
+import { orderFormData } from "@/app/types/orderFormData";
 
 // Fetching all orders data
 export function useAllOrdersData() {
   return useQuery({
-    queryKey: ['orders'],
+    queryKey: ["orders"],
     queryFn: () => ordersService.getAllOrders(),
   });
 }
 // Fetching order data
 export function useOrderData(number: number) {
   return useQuery({
-    queryKey: ['orders', number],
+    queryKey: ["orders", number],
     queryFn: () => ordersService.getOrderById(number),
     enabled: !!number, // Query runs only if slug exists
   });
@@ -27,7 +27,7 @@ export function useCreateOrder() {
   return useMutation({
     mutationFn: (data: orderFormData) => ordersService.createOrder(data),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['orders'] });
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
     },
   });
 }
@@ -35,9 +35,21 @@ export function useCreateOrder() {
 // Fetching sale files
 export function useOrderFiles(number: number) {
   return useQuery({
-    queryKey: ['files', number],
+    queryKey: ["files", number],
     queryFn: () => ordersService.getOrderFiles(number),
     enabled: !!number,
+  });
+}
+
+// Updating Order
+export function useUpdateOrder() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: Order) => ordersService.updateOrder(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+    },
   });
 }
 
@@ -46,10 +58,9 @@ export function useUpdateOrderStatus() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: { number: number; status: string }) =>
-      ordersService.updateOrderStatus(data),
+    mutationFn: (data: { number: number; status: string }) => ordersService.updateOrderStatus(data),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['orders', variables.number] });
+      queryClient.invalidateQueries({ queryKey: ["orders", variables.number] });
     },
   });
 }
@@ -59,10 +70,9 @@ export function useUpdateComment() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: { number: number; comment: string }) =>
-      ordersService.updateComment(data),
+    mutationFn: (data: { number: number; comment: string }) => ordersService.updateComment(data),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['orders', variables.number] });
+      queryClient.invalidateQueries({ queryKey: ["orders", variables.number] });
     },
   });
 }
@@ -80,7 +90,7 @@ export function useUpdateItem() {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['orders'] });
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
     },
   });
 }
@@ -92,7 +102,7 @@ export function useUploadFiles(number: number) {
   return useMutation({
     mutationFn: (formData: FormData) => ordersService.uploadFiles(formData),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['files', number] });
+      queryClient.invalidateQueries({ queryKey: ["files", number] });
     },
   });
 }

@@ -1,28 +1,24 @@
-'use client';
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
-import { useQueryClient } from '@tanstack/react-query';
-import { Button } from '@/components/ui/button';
-import { RiMessage2Fill, RiEditFill } from 'react-icons/ri';
-import ui from '@/app/data/ui.json';
-import { Item } from '@/app/types/item';
-import Loader from '@/components/shared/loader';
+"use client";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { RiMessage2Fill, RiEditFill } from "react-icons/ri";
+import ui from "@/app/data/ui.json";
+import { Item } from "@/app/types/item";
+import Loader from "@/components/shared/loader";
 import {
   OrderDialog,
   ItemDialog,
   CommentDialog,
   UploadDialog,
-} from '@/components/pages/order/dialogs';
-import { Files, Items, TopBar } from '@/components/pages/order';
-import { orderDates } from '@/utils/order-dates';
-import { orderTotal, orderLeft } from '@/utils/order-numbers';
-import { moneyFormat } from '@/utils/format';
-import {
-  useOrderData,
-  useOrderFiles,
-  useUpdateOrderStatus,
-} from '@/hooks/api/useOrderData';
-import ErrorComponent from '@/components/shared/error';
+} from "@/components/pages/order/dialogs";
+import { Files, Items, TopBar } from "@/components/pages/order";
+import { orderDates } from "@/utils/order-dates";
+import { orderTotal, orderLeft } from "@/utils/order-numbers";
+import { moneyFormat } from "@/utils/format";
+import { useOrderData, useOrderFiles, useUpdateOrderStatus } from "@/hooks/api/useOrderData";
+import ErrorComponent from "@/components/shared/error";
 
 export default function OrderPage() {
   const queryClient = useQueryClient();
@@ -72,9 +68,9 @@ export default function OrderPage() {
 
   const newItemState = {
     id: null,
-    description: '',
+    description: "",
     quantity: 1,
-    price: '',
+    price: "",
     discount: 0,
     total: 0,
     _discount: 0,
@@ -87,7 +83,7 @@ export default function OrderPage() {
     } else {
       setItemInEdit(order.items.find((item: Item) => item.id === id) || null);
     }
-    toggleDialog('itemEdit', !dialogs.itemEdit);
+    toggleDialog("itemEdit", !dialogs.itemEdit);
   }
 
   const handleStatusChange = (status: any) => {
@@ -97,9 +93,9 @@ export default function OrderPage() {
   return (
     <div>
       <TopBar
-        salesData={order}
-        setCommentDialog={() => toggleDialog('comment', !dialogs.comment)}
-        setUploadDialog={() => toggleDialog('upload', !dialogs.upload)}
+        data={order}
+        commentDialog={() => toggleDialog("comment", !dialogs.comment)}
+        uploadDialog={() => toggleDialog("upload", !dialogs.upload)}
         handleStatusChange={handleStatusChange}
       />
 
@@ -116,9 +112,10 @@ export default function OrderPage() {
             {ui.global.deadline}
             <div>
               <Button
-                variant={'outline'}
+                variant={"outline"}
                 className="flex ml-auto text-black dark:text-white"
-                onClick={() => toggleDialog('orderEdit', !dialogs.orderEdit)}>
+                onClick={() => toggleDialog("orderEdit", !dialogs.orderEdit)}
+              >
                 <RiEditFill />
               </Button>
             </div>
@@ -126,15 +123,12 @@ export default function OrderPage() {
         </div>
         <div className="grid grid-cols-10 divide-x text-left gap-8 py-6 border-t border-zinc-200 dark:border-zinc-800 divide-zinc-200 dark:divide-zinc-800">
           <div className="pl-4 break-all col-span-2">{order.client}</div>
-          <div className="pl-4">{order.tel}</div>
+          <div className="pl-4">{order.phone}</div>
           <div className="pl-4">{order.email}</div>
           <div className="col-span-2 pl-4">{order.address}</div>
           <div className="pl-4">{orderTotal(order).currencyString}</div>
-          <div className="pl-4">{moneyFormat(order.prepay)}</div>
-          <div
-            className={
-              orderLeft(order).number > 0 ? 'text-red-500 pl-4' : 'pl-4'
-            }>
+          <div className="pl-4">{moneyFormat(order.prepayment)}</div>
+          <div className={orderLeft(order).number > 0 ? "text-red-500 pl-4" : "pl-4"}>
             {orderLeft(order).currencyString}
           </div>
           <div className="pl-4">
@@ -152,17 +146,16 @@ export default function OrderPage() {
         <div className="commentBlock p-6 bg-orange-100 dark:bg-orange-950 text-orange-950 dark:text-orange-300 m-6 rounded-sm">
           <div className="flex min-h-10 justify-center">
             <div className="text-orange-400 p-2 rounded-t-sm">
-              <RiMessage2Fill style={{ width: '24px', height: '24px' }} />
+              <RiMessage2Fill style={{ width: "24px", height: "24px" }} />
             </div>
-            <div
-              style={{ whiteSpace: 'pre-line' }}
-              className="flex px-4 items-center flex-1">
-              {order.comment.replace(/\\r\\n/g, '\r\n')}
+            <div style={{ whiteSpace: "pre-line" }} className="flex px-4 items-center flex-1">
+              {order.comment.replace(/\\r\\n/g, "\r\n")}
             </div>
             <Button
-              variant={'ghost'}
+              variant={"ghost"}
               className="bg-orange-200 text-orange-500 hover:bg-orange-500 hover:text-white dark:bg-opacity-15 dark:bg-orange-900 dark:text-orange-200"
-              onClick={() => toggleDialog('comment', !dialogs.comment)}>
+              onClick={() => toggleDialog("comment", !dialogs.comment)}
+            >
               <RiEditFill />
             </Button>
           </div>
@@ -173,36 +166,28 @@ export default function OrderPage() {
 
       <OrderDialog
         dialog={dialogs.orderEdit}
-        trigger={() => toggleDialog('orderEdit', !dialogs.orderEdit)}
+        trigger={() => toggleDialog("orderEdit", !dialogs.orderEdit)}
         data={order}
-        fetchSalesData={() =>
-          queryClient.invalidateQueries({ queryKey: ['orders', number] })
-        }
+        fetchSalesData={() => queryClient.invalidateQueries({ queryKey: ["orders", number] })}
       />
       <ItemDialog
         saleNumber={order.number}
         dialog={dialogs.itemEdit}
-        trigger={() => toggleDialog('itemEdit', !dialogs.itemEdit)}
+        trigger={() => toggleDialog("itemEdit", !dialogs.itemEdit)}
         data={itemInEdit}
-        fetchSalesData={() =>
-          queryClient.invalidateQueries({ queryKey: ['orders', number] })
-        }
+        fetchSalesData={() => queryClient.invalidateQueries({ queryKey: ["orders", number] })}
       />
       <CommentDialog
         dialog={dialogs.comment}
-        trigger={() => toggleDialog('comment', !dialogs.comment)}
+        trigger={() => toggleDialog("comment", !dialogs.comment)}
         data={{ number: order.number, comment: order.comment }}
-        fetchSalesData={() =>
-          queryClient.invalidateQueries({ queryKey: ['orders', number] })
-        }
+        fetchSalesData={() => queryClient.invalidateQueries({ queryKey: ["orders", number] })}
       />
       <UploadDialog
         dialog={dialogs.upload}
-        trigger={() => toggleDialog('upload', !dialogs.upload)}
+        trigger={() => toggleDialog("upload", !dialogs.upload)}
         number={order.number}
-        fetchSalesData={() =>
-          queryClient.invalidateQueries({ queryKey: ['files', number] })
-        }
+        fetchSalesData={() => queryClient.invalidateQueries({ queryKey: ["files", number] })}
       />
     </div>
   );

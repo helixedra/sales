@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import {
   Textarea,
   Label,
@@ -8,13 +8,13 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui';
-import { useForm, SubmitHandler } from 'react-hook-form';
-import { useEffect } from 'react';
-import { Description } from '@radix-ui/react-dialog';
-import { useUpdateComment } from '@/hooks/api/useOrderData';
-import { Order } from '@/app/types/order';
-import ui from '@/app/data/ui.json';
+} from "@/components/ui";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { useEffect } from "react";
+import { Description } from "@radix-ui/react-dialog";
+import { useUpdateComment } from "@/hooks/api/useOrderData";
+import { Order } from "@/app/types/order";
+import ui from "@/app/data/ui.json";
 
 type FormValues = {
   number: number;
@@ -24,16 +24,11 @@ type FormValues = {
 type Props = {
   dialog: boolean;
   trigger: () => void;
-  data: Order;
+  data: FormValues;
   fetchSalesData: () => void;
 };
 
-export function CommentDialog({
-  dialog,
-  trigger,
-  data,
-  fetchSalesData,
-}: Props) {
+export function CommentDialog({ dialog, trigger, data, fetchSalesData }: Props) {
   //Form initialization
   const {
     register,
@@ -67,9 +62,9 @@ export function CommentDialog({
           <Description />
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div style={{ paddingBottom: '1rem' }}>
+          <div style={{ paddingBottom: "1rem" }}>
             <Label>{ui.global.comment}</Label>
-            <Textarea {...register('comment')} />
+            <Textarea {...register("comment")} />
             {errors.comment && <span>{ui.global.field_required}</span>}
           </div>
           <Button type="submit">{ui.global.save}</Button>

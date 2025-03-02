@@ -1,4 +1,4 @@
-export interface Item {
+export type Item = {
   id: number | null;
   description: string;
   quantity: number | string;
@@ -6,4 +6,4 @@ export interface Item {
   total: number | string;
   discount: number | string;
   order_number: number | string;
-}
+};

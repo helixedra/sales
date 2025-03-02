@@ -1,8 +1,8 @@
 import ui from "@/app/data/ui.json";
 
-interface Status {
+type Status = {
   name: string;
-}
+};
 
 const statuses: { [key: string]: Status } = {
   new: { name: ui.status.new },

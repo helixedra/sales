@@ -1,4 +1,4 @@
-export interface orderFormData {
+export type orderFormData = {
   id: number;
   date: string;
   status: string;
@@ -17,4 +17,4 @@ export interface orderFormData {
     price: string;
     discount: string;
   }[];
-}
+};
