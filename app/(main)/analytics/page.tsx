@@ -1,107 +1,113 @@
 "use client";
-import { useState, useEffect } from "react";
-import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import { useEffect } from "react";
+import { useAllOrdersData } from "@/hooks/api/useOrderData";
+import { Order } from "@/app/types/order";
+import { orderTotal } from "@/utils/order-numbers";
+import { moneyFormat } from "@/utils/format";
+import Loader from "@/components/shared/loader";
 import ui from "@/app/data/ui.json";
-import { Order } from "@/app/types/item";
 
-export default function Analytics() {
-  // Fetch data from the API
-  const {
-    isLoading,
-    isError,
-    error,
-    data: ordersData,
-  } = useQuery({
-    queryKey: ["orders"],
-    queryFn: async () => {
-      const res = await axios.get("/api/orders");
-      return res.data;
-    },
-    initialData: [],
-  });
+// Types
+type YearlySortedOrders = {
+  [key: number]: Order[];
+};
 
-  // Calculate totals and metrics from data
-  const calculateMetrics = (ordersData: Order[]) => {
-    // Calculate total
-    const total = ordersData.reduce((acc, value) => {
-      return acc + (value.price * value.qty - value.price * value.qty * value.order_dis);
-    }, 0);
+type GlobalMetrics = {
+  totalTurnover: number;
+  totalItems: number;
+  averageCheck: number;
+};
 
-    // Calculate total quantity
-    const qty = ordersData.reduce((acc, value) => {
-      return acc + value.qty;
-    }, 0);
+// Helper functions for data processing
+const calculateGross = (orders: Order[]): number => {
+  return orders.reduce((acc, order) => {
+    return acc + orderTotal(order).number;
+  }, 0);
+};
 
-    // Calculate average
-    const average = Math.round(total / qty);
+const calculateGlobalMetrics = (orders: Order[]): GlobalMetrics => {
+  const totalTurnover = calculateGross(orders);
 
-    return { total, qty, average };
-  };
+  const totalItems = orders.reduce((acc, order) => {
+    return acc + order.items.length;
+  }, 0);
 
-  // Group data by year
-  const groupByYear = (ordersData: Order[]) => {
-    const sorted: { [key: number]: Order[] } = {};
-    ordersData.forEach((order) => {
-      const year = new Date(order.created).getFullYear();
-      if (!sorted[year]) {
-        sorted[year] = [];
-      }
-      sorted[year].push(order);
-    });
+  const averageCheck = totalItems > 0 ? Math.round(totalTurnover / totalItems) : 0;
+
+  return { totalTurnover, totalItems, averageCheck };
+};
+
+const groupOrdersByYear = (orders: Order[]): YearlySortedOrders => {
+  return orders.reduce((sorted: YearlySortedOrders, order) => {
+    const year = new Date(order.date).getFullYear();
+
+    if (!sorted[year]) {
+      sorted[year] = [];
+    }
+
+    sorted[year].push(order);
     return sorted;
-  };
+  }, {});
+};
 
-  // Calculate gross for a specific year's data
-  const calculateGross = (yearData: Order[]) => {
-    return yearData.reduce((acc: number, value: Order) => {
-      return acc + (value.price * value.qty - value.price * value.qty * value.order_dis);
-    }, 0);
-  };
+// Component for the yearly bar chart
+const YearlyBarChart = ({ sortedByYear }: { sortedByYear: YearlySortedOrders }) => {
+  return (
+    <div className="flex justify-around items-end mb-8 h-72">
+      {Object.entries(sortedByYear).map(([year, yearData]) => {
+        const amount = calculateGross(yearData);
+        // Calculate height based on amount, with a minimum height
+        const barHeight = Math.max(5, amount / 10000);
 
-  const { total, qty, average } = calculateMetrics(ordersData);
-  const sortedByYear = groupByYear(ordersData);
+        return (
+          <div key={year} className="flex flex-col items-center mx-4">
+            <div className="font-bold mb-2">{year}</div>
+            <div
+              className="w-12 bg-black dark:bg-zinc-400 mb-2 transition-all duration-500"
+              style={{ height: `${barHeight}px` }}
+            ></div>
+            <div className="text-sm">{moneyFormat(amount)}</div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
 
-  // Format number with commas and decimal points
-  const formatNumber = (number: number) => {
-    return number.toLocaleString("uk-UA", { style: "currency", currency: "UAH" });
-  };
+// Component for metric cards
+const MetricCard = ({ label, value }: { label: string; value: string | number }) => {
+  return (
+    <div className="border border-zinc-400 border-opacity-20 rounded-lg p-6">
+      <div className="text-gray-600 mb-2">{label}</div>
+      <div className="text-xl font-bold">{value}</div>
+    </div>
+  );
+};
+
+// Main Analytics component
+export default function Analytics() {
+  const { isLoading, data: orders = [] } = useAllOrdersData();
+
+  useEffect(() => {
+    document.title = `${ui.pages.analytics} - ${ui.pages.site_name}`;
+  }, []);
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  const metrics = calculateGlobalMetrics(orders);
+  const sortedByYear = groupOrdersByYear(orders);
 
   return (
     <div className="flex flex-col min-h-screen">
       <main className="container mx-auto px-4 py-8">
-        <div className="flex justify-around items-end mb-8 h-72">
-          {Object.entries(sortedByYear).map(([year, yearData]) => {
-            const amount = calculateGross(yearData);
-            // Calculate height based on amount, with a minimum height
-            const barHeight = Math.max(5, amount / 10000);
-
-            return (
-              <div key={year} className="flex flex-col items-center mx-4">
-                <div className="font-bold mb-2">{year}</div>
-                <div
-                  className="w-12 bg-black dark:bg-zinc-400 mb-2 transition-all duration-500"
-                  style={{ height: `${barHeight}px` }}
-                ></div>
-                <div className="text-sm">{formatNumber(amount)}</div>
-              </div>
-            );
-          })}
-        </div>
+        <YearlyBarChart sortedByYear={sortedByYear} />
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="border border-zinc-400 border-opacity-20 rounded-lg p-6">
-            <div className="text-gray-600 mb-2">{ui.global.total_turnover}</div>
-            <div className="text-xl font-bold">{formatNumber(total)}</div>
-          </div>
-          <div className="border border-zinc-400 border-opacity-20 rounded-lg p-6">
-            <div className="text-gray-600 mb-2">{ui.global.total_units}</div>
-            <div className="text-xl font-bold">{qty} шт.</div>
-          </div>
-          <div className="border border-zinc-400 border-opacity-20 rounded-lg p-6">
-            <div className="text-gray-600 mb-2">{ui.global.average_check}</div>
-            <div className="text-xl font-bold">{formatNumber(average)}</div>
-          </div>
+          <MetricCard label={ui.global.total_turnover} value={moneyFormat(metrics.totalTurnover)} />
+          <MetricCard label={ui.global.total_units} value={`${metrics.totalItems} шт.`} />
+          <MetricCard label={ui.global.average_check} value={moneyFormat(metrics.averageCheck)} />
         </div>
       </main>
     </div>

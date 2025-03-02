@@ -1,7 +1,8 @@
-import { Item } from './item';
+import { Item } from "./item";
 
 export interface Order {
   id: number;
+  created: string;
   date: string;
   status: string;
   number: number;
