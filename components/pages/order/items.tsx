@@ -1,10 +1,10 @@
-'use client';
-import { Item } from '@/app/types/item';
-import { RiEditFill, RiAddFill } from 'react-icons/ri';
-import { Button } from '@/components/ui/button';
-import ui from '@/app/data/ui.json';
-import { Order } from '@/app/types/order';
-import { moneyFormat } from '@/utils/format';
+"use client";
+import { Item } from "@/app/types/Item";
+import { RiEditFill, RiAddFill } from "react-icons/ri";
+import { Button } from "@/components/ui/button";
+import ui from "@/app/data/ui.json";
+import { Order } from "@/app/types/Order";
+import { moneyFormat } from "@/utils/format";
 
 export function Items({ data, handler }: { data: Order; handler: any }) {
   return data.items.length > 0 ? (
@@ -23,7 +23,8 @@ export function Items({ data, handler }: { data: Order; handler: any }) {
           {data.items?.map((item: Item) => (
             <div
               key={item.id}
-              className="flex border-t border-zinc-200 dark:border-zinc-800 py-6 items-center">
+              className="flex border-t border-zinc-200 dark:border-zinc-800 py-6 items-center"
+            >
               <div className="w-[10%]">
                 {data.number}-{item.id}
               </div>
@@ -33,10 +34,7 @@ export function Items({ data, handler }: { data: Order; handler: any }) {
               <div className="w-[5%]">{Number(item.discount) * 100}%</div>
               <div className="w-[10%]">{moneyFormat(item.total)}</div>
               <div className="w-[4%] flex">
-                <Button
-                  className="ml-auto"
-                  variant={'outline'}
-                  onClick={() => handler(item.id)}>
+                <Button className="ml-auto" variant={"outline"} onClick={() => handler(item.id)}>
                   <RiEditFill />
                 </Button>
               </div>

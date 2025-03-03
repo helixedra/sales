@@ -1,5 +1,5 @@
 "use client";
-import { Order } from "@/app/types/order";
+import { Order } from "@/app/types/Order";
 import {
   Dialog,
   DialogContent,

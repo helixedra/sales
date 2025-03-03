@@ -1,8 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { itemsService, ordersService } from "@/services";
-import { Item } from "@/app/types/item";
-import { Order } from "@/app/types/order";
-import { orderFormData } from "@/app/types/orderFormData";
+import { Item } from "@/app/types/Item";
+import { Order } from "@/app/types/Order";
+import { OrderFormData } from "@/app/types/OrderFormData";
 
 // Fetching all orders data
 export function useAllOrdersData() {
@@ -25,7 +25,7 @@ export function useCreateOrder() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: orderFormData) => ordersService.createOrder(data),
+    mutationFn: (data: OrderFormData) => ordersService.createOrder(data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["orders"] });
     },

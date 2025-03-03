@@ -13,7 +13,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { useEffect } from "react";
 import { Description } from "@radix-ui/react-dialog";
 import { useUpdateComment } from "@/hooks/api/useOrderData";
-import { Order } from "@/app/types/order";
+import { Order } from "@/app/types/Order";
 import ui from "@/app/data/ui.json";
 
 type FormValues = {

@@ -67,6 +67,7 @@
     "comment": "Коментар",
     "uploading": "Завантаження...",
     "new_order": "Нове замовлення",
+    "error_loading_data": "Помилка завантаження даних",
     "description": "Опис"
   },
 

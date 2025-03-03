@@ -1,18 +1,12 @@
-import { NextResponse } from 'next/server';
-import { db } from '@/utils/db';
-import { Order } from '@/app/types/order';
+import { NextResponse } from "next/server";
+import { db } from "@/utils/db";
+import { Order } from "@/app/types/Order";
 
-export async function GET(
-  request: Request,
-  { params }: { params: { number: string } }
-) {
+export async function GET(request: Request, { params }: { params: { number: string } }) {
   const { number } = await params;
 
   if (!number) {
-    return NextResponse.json(
-      { error: 'Sale number is required' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "Sale number is required" }, { status: 400 });
   }
 
   try {
@@ -58,22 +52,17 @@ export async function GET(
       .get(number);
 
     if (!order) {
-      return NextResponse.json({ error: 'Sale not found' }, { status: 404 });
+      return NextResponse.json({ error: "Sale not found" }, { status: 404 });
     }
 
     // If items is returned as a JSON string, parse it
-    if (typeof (order as Order).items === 'string') {
-      (order as Order).items = JSON.parse(
-        (order as Order).items as unknown as string
-      );
+    if (typeof (order as Order).items === "string") {
+      (order as Order).items = JSON.parse((order as Order).items as unknown as string);
     }
 
     return NextResponse.json(order);
   } catch (error) {
-    console.error('Error fetching sale:', error);
-    return NextResponse.json(
-      { error: 'Internal Server Error' },
-      { status: 500 }
-    );
+    console.error("Error fetching sale:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

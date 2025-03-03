@@ -1,23 +1,17 @@
-// pages/api/inventory.ts
 import { NextResponse } from "next/server";
 import { db } from "@/utils/db";
-
-// Type for inventory item
-type InventoryItem = {
-  id: number;
-  category: string;
-  name: string;
-  thickness: number;
-  length: number;
-  width: number;
-  note: string | null;
-};
+import type { InventoryItem } from "@/app/types/InventoryItem";
 
 export async function GET() {
-  const items = db
-    .prepare(
-      "SELECT id, category, name, thickness, length, width, note FROM inventory_items ORDER BY category, name"
-    )
-    .all();
-  return NextResponse.json(items);
+  try {
+    const items: InventoryItem[] = db
+      .prepare(
+        "SELECT id, category, name, thickness, length, width, note FROM inventory_items ORDER BY category, name"
+      )
+      .all() as InventoryItem[];
+    return NextResponse.json(items);
+  } catch (error) {
+    console.error("Error fetching inventory items:", error);
+    return NextResponse.json({ error: "Failed to fetch inventory items" }, { status: 500 });
+  }
 }

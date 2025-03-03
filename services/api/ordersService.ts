@@ -1,7 +1,7 @@
 import api from "./index";
 import axios from "axios";
-import { orderFormData } from "@/app/types/orderFormData";
-import { Order } from "@/app/types/order";
+import { OrderFormData } from "@/app/types/OrderFormData";
+import { Order } from "@/app/types/Order";
 
 type OrderData = {
   id: number;
@@ -24,7 +24,7 @@ export const ordersService = {
   },
 
   // Create a new order
-  createOrder: async (data: orderFormData): Promise<any> => {
+  createOrder: async (data: OrderFormData): Promise<any> => {
     const response = await api.post("/orders/create", data);
     return response.data;
   },

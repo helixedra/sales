@@ -1,4 +1,4 @@
-export type orderFormData = {
+export type OrderFormData = {
   id: number;
   date: string;
   status: string;

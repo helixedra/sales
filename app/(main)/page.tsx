@@ -3,7 +3,7 @@ import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import Link from "next/link";
 import clsx from "clsx";
 import { Item } from "@/app/types/item";
-import { Order } from "@/app/types/order";
+import { Order } from "@/app/types/Order";
 import statuses from "@/utils/status";
 import Status from "@/components/shared/status";
 import Loader from "@/components/shared/loader";
@@ -94,12 +94,12 @@ export default function OrdersPage() {
   const { isLoading, data: orders } = useAllOrdersData();
 
   // Filtering data
-  const filteredSales = useMemo(() => {
+  const filteredOrders = useMemo(() => {
     const trimmedQuery = searchQuery.trim();
     if (!trimmedQuery) return orders;
 
     const queryLower = trimmedQuery.toLowerCase();
-    return orders.filter(
+    return orders?.filter(
       (order: Order) =>
         order.client?.toLowerCase().includes(queryLower) ||
         order.items.some((item: Item) => item.description?.toLowerCase().includes(queryLower)) ||
@@ -148,12 +148,12 @@ export default function OrdersPage() {
         <TableHeader />
 
         <div className="TableBody">
-          {filteredSales.length === 0 ? (
+          {filteredOrders?.length === 0 ? (
             <div className="p-4 text-center text-gray-500">
               {ui.global.nothing_found} "{searchQuery}"
             </div>
           ) : (
-            filteredSales.map((order: Order) => <OrderRow key={order.id} order={order} />)
+            filteredOrders?.map((order: Order) => <OrderRow key={order.id} order={order} />)
           )}
         </div>
       </div>

@@ -12,9 +12,9 @@ export async function POST(request: Request) {
     );
     const info = stmt.run(category, name, thickness, length, width, note);
 
-    return NextResponse.json({ message: "Sale added successfully" }, { status: 201 });
+    return NextResponse.json({ message: "Inventory added successfully" }, { status: 201 });
   } catch (error) {
-    console.error("Error adding sale:", error);
+    console.error("Error adding inventory:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

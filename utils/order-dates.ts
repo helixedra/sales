@@ -1,5 +1,5 @@
 import moment from "moment";
-import { Order } from "@/app/types/order";
+import { Order } from "@/app/types/Order";
 
 type OrderDates = {
   dateLocal: string;

@@ -18,7 +18,7 @@ import {
 import moment from "moment";
 import ui from "@/app/data/ui.json";
 import statuses from "@/utils/status";
-import { Order } from "@/app/types/order";
+import { Order } from "@/app/types/Order";
 
 type Props = {
   data: Order;

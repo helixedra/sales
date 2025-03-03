@@ -1,7 +1,7 @@
 "use client";
 import { useEffect } from "react";
 import { useAllOrdersData } from "@/hooks/api/useOrderData";
-import { Order } from "@/app/types/order";
+import { Order } from "@/app/types/Order";
 import { orderTotal } from "@/utils/order-numbers";
 import { moneyFormat } from "@/utils/format";
 import Loader from "@/components/shared/loader";

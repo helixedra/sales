@@ -9,7 +9,7 @@ import {
 import { Textarea, Input, Label, Button } from "@/components/ui";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useEffect } from "react";
-import { Item } from "@/app/types/item";
+import { Item } from "@/app/types/Item";
 import { Description } from "@radix-ui/react-dialog";
 import { useUpdateItem } from "@/hooks/api/useOrderData";
 import { useQueryClient } from "@tanstack/react-query";

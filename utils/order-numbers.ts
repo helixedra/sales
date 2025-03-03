@@ -1,5 +1,5 @@
-import { Order } from '@/app/types/order';
-import { moneyFormat } from './format';
+import { Order } from "@/app/types/Order";
+import { moneyFormat } from "./format";
 
 type OrderTotal = { number: number; currencyString: string };
 

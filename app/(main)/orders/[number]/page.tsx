@@ -5,7 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { RiMessage2Fill, RiEditFill } from "react-icons/ri";
 import ui from "@/app/data/ui.json";
-import { Item } from "@/app/types/item";
+import { Item } from "@/app/types/Item";
 import Loader from "@/components/shared/loader";
 import {
   OrderDialog,
