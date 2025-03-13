@@ -14,22 +14,28 @@ import {
   UploadDialog,
 } from "@/components/pages/order/dialogs";
 import { Files, Items, TopBar } from "@/components/pages/order";
-import { orderDates } from "@/utils/order-dates";
-import { orderTotal, orderLeft } from "@/utils/order-numbers";
-import { moneyFormat } from "@/utils/format";
+import { orderDates } from "@/lib/order-dates";
+import { orderTotal, orderLeft } from "@/lib/order-numbers";
+import { moneyFormat } from "@/lib/format";
 import { useOrderData, useOrderFiles, useUpdateOrderStatus } from "@/hooks/api/useOrderData";
 import ErrorComponent from "@/components/shared/error";
+import { ReceiptDialog } from "@/components/pages/order/dialogs/receipt-dialog";
+
 
 export default function OrderPage() {
   const queryClient = useQueryClient();
   const { number } = useParams();
   const [itemInEdit, setItemInEdit] = useState<Item | null>(null);
+  
 
   const [dialogs, setDialogs] = useState({
     orderEdit: false,
     itemEdit: false,
     comment: false,
     upload: false,
+    invoice: false,
+    requestForm: false,
+    receipt: false,
   });
 
   // Get order data
@@ -96,6 +102,9 @@ export default function OrderPage() {
         data={order}
         commentDialog={() => toggleDialog("comment", !dialogs.comment)}
         uploadDialog={() => toggleDialog("upload", !dialogs.upload)}
+        invoiceDialog={() => toggleDialog("invoice", !dialogs.invoice)}
+        receiptDialog={() => toggleDialog("receipt", !dialogs.receipt)}
+        requestFormDialog={() => toggleDialog("requestForm", !dialogs.requestForm)}
         handleStatusChange={handleStatusChange}
       />
 
@@ -189,6 +198,22 @@ export default function OrderPage() {
         number={order.number}
         fetchSalesData={() => queryClient.invalidateQueries({ queryKey: ["files", number] })}
       />
+            {/* <InvoiceDialog
+        dialog={dialogs.invoice}
+        trigger={() => toggleDialog("invoice", !dialogs.invoice)}
+        number={order.number}
+      /> */}
+            <ReceiptDialog
+        dialog={dialogs.receipt}
+        trigger={() => toggleDialog("receipt", !dialogs.receipt)}
+        number={order.number}
+        
+      />
+            {/* <RequestFormDialog
+        dialog={dialogs.requestForm}
+        trigger={() => toggleDialog("requestForm", !dialogs.requestForm)}
+        number={order.number}
+      /> */}
     </div>
   );
 }

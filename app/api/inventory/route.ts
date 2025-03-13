@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { db } from "@/utils/db";
+import { db } from "@/lib/db";
 import type { InventoryItem } from "@/app/types/InventoryItem";
 
 export async function GET() {

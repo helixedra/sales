@@ -17,7 +17,7 @@ import {
 } from "react-icons/ri";
 import moment from "moment";
 import ui from "@/app/data/ui.json";
-import statuses from "@/utils/status";
+import statuses from "@/lib/status";
 import { Order } from "@/app/types/Order";
 
 type Props = {
@@ -25,9 +25,12 @@ type Props = {
   commentDialog: () => void;
   uploadDialog: () => void;
   handleStatusChange: (status: string) => void;
+  invoiceDialog: () => void;
+  receiptDialog: () => void;
+  requestFormDialog: () => void;
 };
 
-export function TopBar({ data, commentDialog, uploadDialog, handleStatusChange }: Props) {
+export function TopBar({ data, commentDialog, uploadDialog, handleStatusChange, invoiceDialog, receiptDialog, requestFormDialog }: Props) {
   const date = moment(data.date).format("DD.MM.YYYY");
   return (
     <div className="topBar flex p-6 items-center">
@@ -69,15 +72,15 @@ export function TopBar({ data, commentDialog, uploadDialog, handleStatusChange }
           <RiUploadCloud2Line />
           {ui.global.upload_files}
         </Button>
-        <Button>
+        <Button onClick={receiptDialog}>
           <RiReceiptLine />
           {ui.global.receipt}
         </Button>
-        <Button>
+        <Button onClick={requestFormDialog}>
           <RiBillLine />
           {ui.global.request_form}
         </Button>
-        <Button>
+        <Button onClick={invoiceDialog}>
           <RiMoneyDollarBoxLine />
           {ui.global.invoice}
         </Button>

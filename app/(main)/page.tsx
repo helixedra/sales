@@ -2,14 +2,14 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import Link from "next/link";
 import clsx from "clsx";
-import { Item } from "@/app/types/item";
+import { Item } from "@/app/types/Item";
 import { Order } from "@/app/types/Order";
-import statuses from "@/utils/status";
+import statuses from "@/lib/status";
 import Status from "@/components/shared/status";
 import Loader from "@/components/shared/loader";
 import { TopBar } from "@/components/pages/homepage/topbar";
-import { orderDates } from "@/utils/order-dates";
-import { orderTotal, orderLeft } from "@/utils/order-numbers";
+import { orderDates } from "@/lib/order-dates";
+import { orderTotal, orderLeft } from "@/lib/order-numbers";
 import { useAllOrdersData } from "@/hooks/api/useOrderData";
 import ui from "@/app/data/ui.json";
 

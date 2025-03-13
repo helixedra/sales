@@ -2,8 +2,8 @@
 import { useEffect } from "react";
 import { useAllOrdersData } from "@/hooks/api/useOrderData";
 import { Order } from "@/app/types/Order";
-import { orderTotal } from "@/utils/order-numbers";
-import { moneyFormat } from "@/utils/format";
+import { orderTotal } from "@/lib/order-numbers";
+import { moneyFormat } from "@/lib/format";
 import Loader from "@/components/shared/loader";
 import ui from "@/app/data/ui.json";
 

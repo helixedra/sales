@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 import sharp from 'sharp';
-import { db } from '@/utils/db';
+import { db } from '@/lib/db';
 
 const uploadDir = path.join(process.cwd(), 'public', 'uploads');
 

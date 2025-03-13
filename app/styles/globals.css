@@ -84,6 +84,12 @@ body {
   .cutLine {
     @apply truncate whitespace-nowrap overflow-hidden text-nowrap;
   }
+  input, textarea {
+    @apply  dark:border-zinc-800;
+  }
+  hr {
+    @apply dark:border-zinc-800
+  }
 }
 
 .status-new {

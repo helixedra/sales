@@ -1,12 +1,12 @@
 'use client';
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { RiArrowLeftFill } from 'react-icons/ri';
-import ui from '@/app/data/ui.json';
 import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { useCreateOrder } from '@/hooks/api/useOrderData';
+import Link from 'next/link';
+import ui from '@/app/data/ui.json';
 
 export default function NewSale() {
   const router = useRouter();
@@ -119,12 +119,12 @@ export default function NewSale() {
         </h1>
       </div>
 
-      <hr className="border-gray-300 mb-6" />
+      <hr className="mb-6" />
 
       <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <div className="col-span-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="col-span-1">
+            <label className="block text-sm font-medium  mb-1">
               {ui.sales_table.customer} <span className="text-red-500">*</span>
             </label>
             <input
@@ -133,12 +133,15 @@ export default function NewSale() {
               value={formData.client}
               onChange={handleInputChange}
               required
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-2 border dark:border-zinc-800 dark:bg-transparent rounded"
             />
-          </div>
+            </div>
+
+            <div className="col-span-1">
+            <label className="block text-sm font-medium  mb-1"></label></div>
 
           <div className="col-span-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium  mb-1">
               {ui.sales_table.deadline} {ui.global.dd}
               <span className="text-red-500">*</span>
             </label>
@@ -148,24 +151,24 @@ export default function NewSale() {
               value={formData.term}
               onChange={handleInputChange}
               required
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-2 border dark:border-zinc-800 dark:bg-transparent rounded"
             />
           </div>
 
           <div className="col-span-1 row-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium  mb-1">
               {ui.sales_table.comment}
             </label>
             <textarea
               name="comment"
               value={formData.comment}
               onChange={handleInputChange}
-              className="w-full p-2 border border-gray-300 rounded h-full"
+              className="w-full p-2 border dark:border-zinc-800 dark:bg-transparent rounded h-full"
             />
           </div>
 
           <div className="col-span-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium  mb-1">
               {ui.global.email}
             </label>
             <input
@@ -173,12 +176,12 @@ export default function NewSale() {
               name="email"
               value={formData.email}
               onChange={handleInputChange}
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-2 border dark:border-zinc-800 dark:bg-transparent rounded"
             />
           </div>
 
           <div className="col-span-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium  mb-1">
               {ui.global.phone} <span className="text-red-500">*</span>
             </label>
             <input
@@ -187,12 +190,12 @@ export default function NewSale() {
               value={formData.phone}
               onChange={handleInputChange}
               required
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-2 border dark:border-zinc-800 dark:bg-transparent rounded"
             />
           </div>
 
           <div className="col-span-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium mb-1">
               {ui.global.address}
             </label>
             <input
@@ -200,7 +203,7 @@ export default function NewSale() {
               name="address"
               value={formData.address}
               onChange={handleInputChange}
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-2 border dark:border-zinc-800 dark:bg-transparent rounded"
             />
           </div>
         </div>
@@ -210,7 +213,7 @@ export default function NewSale() {
         <div className="overflow-x-auto mb-4">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="bg-gray-50">
+              <tr className="bg-gray-50 dark:bg-zinc-800">
                 <th className="p-2 text-sm text-left w-0.5/12">
                   {ui.global.num}
                 </th>
@@ -237,49 +240,49 @@ export default function NewSale() {
             <tbody>
               {formData.orderItems.map((item, index) => (
                 <tr key={item.id}>
-                  <td className="p-2 border">{index + 1}</td>
-                  <td className="p-2 border">
+                  <td className="p-2 border dark:border-zinc-800">{index + 1}</td>
+                  <td className="p-2 border dark:border-zinc-800">
                     <textarea
                       value={item.description}
                       onChange={(e) =>
                         handleItemChange(index, 'description', e.target.value)
                       }
-                      className="w-full p-1"
+                      className="w-full p-1 dark:bg-transparent"
                     />
                   </td>
-                  <td className="p-2 border">
+                  <td className="p-2 border dark:border-zinc-800">
                     <input
                       type="number"
                       value={item.quantity}
                       onChange={(e) =>
                         handleItemChange(index, 'quantity', e.target.value)
                       }
-                      className="w-full p-1 text-center"
+                      className="w-full p-1 text-center dark:bg-transparent"
                     />
                   </td>
-                  <td className="p-2 border">
+                  <td className="p-2 border dark:border-zinc-800">
                     <input
                       type="number"
                       value={item.price}
                       onChange={(e) =>
                         handleItemChange(index, 'price', e.target.value)
                       }
-                      className="w-full p-1 text-center"
+                      className="w-full p-1 text-center dark:bg-transparent"
                     />
                   </td>
-                  <td className="p-2 border text-center">
+                  <td className="p-2 border dark:border-zinc-800 text-center">
                     {(
                       (parseFloat(item.quantity) || 0) *
                       (parseFloat(item.price) || 0)
                     ).toFixed(2)}
                   </td>
-                  <td className="p-2 border">
+                  <td className="p-2 border dark:border-zinc-800">
                     <select
                       value={item.discount}
                       onChange={(e) =>
                         handleItemChange(index, 'discount', e.target.value)
                       }
-                      className="w-full p-1 text-center">
+                      className="w-full p-1 text-center dark:bg-transparent">
                       <option value="0">0%</option>
                       <option value="5">5%</option>
                       <option value="10">10%</option>
@@ -287,7 +290,7 @@ export default function NewSale() {
                       <option value="20">20%</option>
                     </select>
                   </td>
-                  <td className="p-2 border text-center">
+                  <td className="p-2 border dark:border-zinc-800 text-center">
                     {calculateItemTotal(item)}
                   </td>
                 </tr>
@@ -299,7 +302,7 @@ export default function NewSale() {
         <button
           type="button"
           onClick={addOrderLine}
-          className="border border-dashed border-gray-300 py-2 text-center w-full mb-6 text-gray-500 hover:bg-gray-50">
+          className="border dark:border-zinc-800 border-dashed py-2 text-center w-full mb-6 text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800">
           {ui.global.add_line}
         </button>
 

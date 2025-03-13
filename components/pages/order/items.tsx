@@ -4,7 +4,7 @@ import { RiEditFill, RiAddFill } from "react-icons/ri";
 import { Button } from "@/components/ui/button";
 import ui from "@/app/data/ui.json";
 import { Order } from "@/app/types/Order";
-import { moneyFormat } from "@/utils/format";
+import { moneyFormat } from "@/lib/format";
 
 export function Items({ data, handler }: { data: Order; handler: any }) {
   return data.items.length > 0 ? (
