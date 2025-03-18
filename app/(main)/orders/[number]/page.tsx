@@ -25,6 +25,7 @@ import {
 import ErrorComponent from "@/components/shared/error";
 import { ReceiptDialog } from "@/components/pages/order/dialogs/receipt-dialog";
 import { RequestFormDialog } from "@/components/pages/order/dialogs/request-dialog";
+import { InvoiceDialog } from "@/components/pages/order/dialogs/invoice-dialog";
 
 export default function OrderPage() {
   const queryClient = useQueryClient();
@@ -223,11 +224,11 @@ export default function OrderPage() {
         trigger={() => toggleDialog("receipt", !dialogs.receipt)}
         number={order.number}
       />
-      {/* <InvoiceDialog
+      <InvoiceDialog
         dialog={dialogs.invoice}
         trigger={() => toggleDialog("invoice", !dialogs.invoice)}
         number={order.number}
-      /> */}
+      />
       <RequestFormDialog
         dialog={dialogs.requestForm}
         trigger={() => toggleDialog("requestForm", !dialogs.requestForm)}
