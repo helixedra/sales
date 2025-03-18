@@ -25,11 +25,13 @@ import account from "@/app/data/account.json";
 import ui from "@/app/data/ui.json";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type FormValues = {
   number: number;
   supplier: string;
   date: Date;
+  signature: boolean;
 };
 
 type Props = {
@@ -50,6 +52,7 @@ export function ReceiptDialog({ dialog, trigger, number }: Props) {
       number: number,
       supplier: account.finance.data_options[0].ipn,
       date: new Date(),
+      signature: true,
     },
   });
 
@@ -57,7 +60,9 @@ export function ReceiptDialog({ dialog, trigger, number }: Props) {
     window.open(
       `/reports/receipt?number=${data.number}&supplier=${encodeURIComponent(
         data.supplier
-      )}&date=${format(data.date, "dd/MM/yyyy")}`,
+      )}&date=${format(data.date, "dd/MM/yyyy")}&signature=${
+        data.signature ? "true" : "false"
+      }`,
       "_blank"
     );
   };
@@ -102,6 +107,20 @@ export function ReceiptDialog({ dialog, trigger, number }: Props) {
                 </div>
               ))}
             </RadioGroup>
+            <div className="flex items-center py-4">
+              <Checkbox
+                {...register("signature")}
+                id="signature"
+                defaultChecked
+                className="mr-2"
+                onCheckedChange={(value: boolean) =>
+                  setValue("signature", value)
+                }
+              />
+              <Label htmlFor="signature" className="cursor-pointer">
+                {ui.global.signature}
+              </Label>
+            </div>
           </div>
           <Button type="submit">{ui.global.generate}</Button>
         </form>

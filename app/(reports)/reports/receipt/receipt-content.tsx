@@ -8,17 +8,20 @@ import { orderTotal, orderTotalTaxed } from "@/lib/order-numbers";
 import account from "@/app/data/account.json";
 import { num2str } from "@/lib/num-words";
 import { moneyFormatDigital } from "@/lib/format";
+import Image from "next/image";
 
 type ReceiptContentProps = {
   number: string;
   supplier: string;
   date: string;
+  signature?: boolean;
 };
 
 export function ReceiptContent({
   number,
   supplier,
   date,
+  signature,
 }: ReceiptContentProps) {
   const { isLoading, error, data: order } = useOrderData(Number(number));
   const acc = account.finance.data_options.find(
@@ -137,7 +140,18 @@ export function ReceiptContent({
                 </td>
               </tr>
               <tr>
-                <td>
+                <td className="relative">
+                  {signature && (
+                    <div className="">
+                      <Image
+                        src={acc?.signature || ""}
+                        alt="Signature"
+                        width={160}
+                        height={40}
+                        className="mix-blend-multiply absolute -top-8 left-0"
+                      />
+                    </div>
+                  )}
                   <div className="font-semibold mt-10">___________________</div>
                   <div>
                     <span className="ml-9 w-1/2">

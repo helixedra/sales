@@ -25,13 +25,11 @@ export function RequestFormContent({
   signature,
 }: RequestFormProps) {
   const { isLoading, error, data: order } = useOrderData(Number(number));
-  const supplierData = account.finance.data_options.find(
+  const acc = account.finance.data_options.find(
     (option) => option.ipn === supplier
   );
   const isDiscounted =
     order?.items.map((item: Item) => Number(item.discount) > 0).length > 0;
-
-  console.log(signature);
 
   if (isLoading) return <Loader />;
 
@@ -153,15 +151,15 @@ export function RequestFormContent({
                     {ui.global.seller}:
                   </h3>
                   <ul className="list-none pb-4">
-                    <li>{supplierData?.name},</li>
+                    <li>{acc?.name},</li>
                     <li>
-                      {ui.global.tax_id}: {supplierData?.ipn}
+                      {ui.global.tax_id}: {acc?.ipn}
                     </li>
                     <li>
-                      {ui.global.address}: {supplierData?.address}
+                      {ui.global.address}: {acc?.address}
                     </li>
                     <li>
-                      {ui.global.phone}: {supplierData?.phone}
+                      {ui.global.phone}: {acc?.phone}
                     </li>
                   </ul>
                   <h3 className="text-sm uppercase font-bold py-2">
@@ -169,20 +167,19 @@ export function RequestFormContent({
                   </h3>
                   <ul className="list-none p-0">
                     <li>
-                      {ui.global.recipient}: {supplierData?.bank.name}
+                      {ui.global.recipient}: {acc?.bank.name}
                     </li>
                     <li>
-                      {ui.global.account}: {supplierData?.bank.account},
+                      {ui.global.account}: {acc?.bank.account},
                     </li>
                     <li>
-                      {ui.global.tax_id}: {supplierData?.ipn}
+                      {ui.global.tax_id}: {acc?.ipn}
                     </li>
                     <li>
-                      {supplierData?.bank.name}, {ui.global.mfo}{" "}
-                      {supplierData?.bank.mfo}
+                      {acc?.bank.name}, {ui.global.mfo} {acc?.bank.mfo}
                     </li>
                     <li>
-                      {ui.global.bank_edrpou}: {supplierData?.bank.edrpou}
+                      {ui.global.bank_edrpou}: {acc?.bank.edrpou}
                     </li>
                     <li>
                       {ui.global.payment_purpose}:{" "}
@@ -211,7 +208,7 @@ export function RequestFormContent({
                   {signature && (
                     <div className="">
                       <Image
-                        src={supplierData?.signature || ""}
+                        src={acc?.signature || ""}
                         alt="Signature"
                         width={160}
                         height={40}
