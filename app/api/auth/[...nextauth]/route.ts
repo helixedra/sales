@@ -1,9 +1,9 @@
-import NextAuth from 'next-auth';
-import CredentialsProvider from 'next-auth/providers/credentials';
-import bcrypt from 'bcrypt';
-import { db } from '@/lib/db';
+import NextAuth from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import bcrypt from "bcrypt";
+import { db } from "@/lib/db";
 
-declare module 'next-auth' {
+declare module "next-auth" {
   interface Session {
     user: {
       id: string;
@@ -17,25 +17,23 @@ declare module 'next-auth' {
 const handler = NextAuth({
   providers: [
     CredentialsProvider({
-      name: 'Credentials',
+      name: "Credentials",
       credentials: {
         email: {
-          label: 'Email',
-          type: 'email',
-          placeholder: 'example@example.com',
+          label: "Email",
+          type: "email",
         },
-        password: { label: 'Password', type: 'password' },
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error('Please enter your email and password');
+          throw new Error("Please enter your email and password");
         }
 
         const { email, password } = credentials;
 
-        // Get user from your database
         const user = db
-          .prepare('SELECT * FROM users WHERE email = ?')
+          .prepare("SELECT * FROM users WHERE email = ?")
           .get(email) as {
           id: string;
           email: string;
@@ -44,17 +42,15 @@ const handler = NextAuth({
         };
 
         if (!user) {
-          throw new Error('User not found');
+          throw new Error("User not found");
         }
 
-        // Check if the password is valid
         const isValidPassword = await bcrypt.compare(password, user.password);
 
         if (!isValidPassword) {
-          throw new Error('Wrong password');
+          throw new Error("Wrong password");
         }
 
-        // Return user object if the email and password match
         return { id: user.id, email: user.email, name: user.name };
       },
     }),
@@ -62,7 +58,6 @@ const handler = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async session({ session, token }) {
-      // add id to session
       if (token.sub && session.user) {
         session.user.id = token.sub;
       }
@@ -76,7 +71,7 @@ const handler = NextAuth({
     },
   },
   pages: {
-    signIn: '/login', // Redirect to /login by default
+    signIn: "/login",
   },
 });
 

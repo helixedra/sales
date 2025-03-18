@@ -17,16 +17,19 @@ import { Files, Items, TopBar } from "@/components/pages/order";
 import { orderDates } from "@/lib/order-dates";
 import { orderTotal, orderLeft } from "@/lib/order-numbers";
 import { moneyFormat } from "@/lib/format";
-import { useOrderData, useOrderFiles, useUpdateOrderStatus } from "@/hooks/api/useOrderData";
+import {
+  useOrderData,
+  useOrderFiles,
+  useUpdateOrderStatus,
+} from "@/hooks/api/useOrderData";
 import ErrorComponent from "@/components/shared/error";
 import { ReceiptDialog } from "@/components/pages/order/dialogs/receipt-dialog";
-
+import { RequestFormDialog } from "@/components/pages/order/dialogs/request-dialog";
 
 export default function OrderPage() {
   const queryClient = useQueryClient();
   const { number } = useParams();
   const [itemInEdit, setItemInEdit] = useState<Item | null>(null);
-  
 
   const [dialogs, setDialogs] = useState({
     orderEdit: false,
@@ -104,7 +107,9 @@ export default function OrderPage() {
         uploadDialog={() => toggleDialog("upload", !dialogs.upload)}
         invoiceDialog={() => toggleDialog("invoice", !dialogs.invoice)}
         receiptDialog={() => toggleDialog("receipt", !dialogs.receipt)}
-        requestFormDialog={() => toggleDialog("requestForm", !dialogs.requestForm)}
+        requestFormDialog={() =>
+          toggleDialog("requestForm", !dialogs.requestForm)
+        }
         handleStatusChange={handleStatusChange}
       />
 
@@ -137,7 +142,11 @@ export default function OrderPage() {
           <div className="col-span-2 pl-4">{order.address}</div>
           <div className="pl-4">{orderTotal(order).currencyString}</div>
           <div className="pl-4">{moneyFormat(order.prepayment)}</div>
-          <div className={orderLeft(order).number > 0 ? "text-red-500 pl-4" : "pl-4"}>
+          <div
+            className={
+              orderLeft(order).number > 0 ? "text-red-500 pl-4" : "pl-4"
+            }
+          >
             {orderLeft(order).currencyString}
           </div>
           <div className="pl-4">
@@ -157,7 +166,10 @@ export default function OrderPage() {
             <div className="text-orange-400 p-2 rounded-t-sm">
               <RiMessage2Fill style={{ width: "24px", height: "24px" }} />
             </div>
-            <div style={{ whiteSpace: "pre-line" }} className="flex px-4 items-center flex-1">
+            <div
+              style={{ whiteSpace: "pre-line" }}
+              className="flex px-4 items-center flex-1"
+            >
               {order.comment.replace(/\\r\\n/g, "\r\n")}
             </div>
             <Button
@@ -177,43 +189,50 @@ export default function OrderPage() {
         dialog={dialogs.orderEdit}
         trigger={() => toggleDialog("orderEdit", !dialogs.orderEdit)}
         data={order}
-        fetchSalesData={() => queryClient.invalidateQueries({ queryKey: ["orders", number] })}
+        fetchSalesData={() =>
+          queryClient.invalidateQueries({ queryKey: ["orders", number] })
+        }
       />
       <ItemDialog
         saleNumber={order.number}
         dialog={dialogs.itemEdit}
         trigger={() => toggleDialog("itemEdit", !dialogs.itemEdit)}
         data={itemInEdit}
-        fetchSalesData={() => queryClient.invalidateQueries({ queryKey: ["orders", number] })}
+        fetchSalesData={() =>
+          queryClient.invalidateQueries({ queryKey: ["orders", number] })
+        }
       />
       <CommentDialog
         dialog={dialogs.comment}
         trigger={() => toggleDialog("comment", !dialogs.comment)}
         data={{ number: order.number, comment: order.comment }}
-        fetchSalesData={() => queryClient.invalidateQueries({ queryKey: ["orders", number] })}
+        fetchSalesData={() =>
+          queryClient.invalidateQueries({ queryKey: ["orders", number] })
+        }
       />
       <UploadDialog
         dialog={dialogs.upload}
         trigger={() => toggleDialog("upload", !dialogs.upload)}
         number={order.number}
-        fetchSalesData={() => queryClient.invalidateQueries({ queryKey: ["files", number] })}
+        fetchSalesData={() =>
+          queryClient.invalidateQueries({ queryKey: ["files", number] })
+        }
       />
-            {/* <InvoiceDialog
+      <ReceiptDialog
+        dialog={dialogs.receipt}
+        trigger={() => toggleDialog("receipt", !dialogs.receipt)}
+        number={order.number}
+      />
+      {/* <InvoiceDialog
         dialog={dialogs.invoice}
         trigger={() => toggleDialog("invoice", !dialogs.invoice)}
         number={order.number}
       /> */}
-            <ReceiptDialog
-        dialog={dialogs.receipt}
-        trigger={() => toggleDialog("receipt", !dialogs.receipt)}
-        number={order.number}
-        
-      />
-            {/* <RequestFormDialog
+      <RequestFormDialog
         dialog={dialogs.requestForm}
         trigger={() => toggleDialog("requestForm", !dialogs.requestForm)}
         number={order.number}
-      /> */}
+      />
     </div>
   );
 }
