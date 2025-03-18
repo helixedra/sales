@@ -49,3 +49,4 @@ public/uploads/*
 !public/uploads/.gitkeep
 
 *.sqlite
+*.sqlite-*
