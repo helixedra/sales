@@ -89,6 +89,7 @@
     "bank_edrpou": "ЄДРПОУ банку",
     "payment_purpose": "Призначення платежу",
     "payment_purpose_text": "Оплата за замовлення №{order_number} від {order_date}",
+    "generate_request": "Генерувати бланк замовлення",
     "receipt_date": "Дата накладної",
     "invoice_date": "Дата рахунку",
     "client": "Клієнт",

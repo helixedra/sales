@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useForm, type SubmitHandler, useFormContext } from "react-hook-form";
 import { format } from "date-fns";
 import { uk as locale } from "date-fns/locale";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Check } from "lucide-react";
 // import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,11 +25,13 @@ import account from "@/app/data/account.json";
 import ui from "@/app/data/ui.json";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type FormValues = {
   number: number;
   supplier: string;
   date: Date;
+  signature: boolean;
 };
 
 type Props = {
@@ -50,6 +52,7 @@ export function RequestFormDialog({ dialog, trigger, number }: Props) {
       number: number,
       supplier: account.finance.data_options[0].ipn,
       date: new Date(),
+      signature: true,
     },
   });
 
@@ -57,7 +60,9 @@ export function RequestFormDialog({ dialog, trigger, number }: Props) {
     window.open(
       `/reports/request?number=${data.number}&supplier=${encodeURIComponent(
         data.supplier
-      )}&date=${format(data.date, "dd/MM/yyyy")}`,
+      )}&date=${format(data.date, "dd/MM/yyyy")}&signature=${
+        data.signature ? "true" : "false"
+      }`,
       "_blank"
     );
   };
@@ -68,14 +73,14 @@ export function RequestFormDialog({ dialog, trigger, number }: Props) {
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold">
-            {ui.global.generate_receipt}
+            {ui.global.generate_request}
           </DialogTitle>
           <Description className="text-sm text-gray-500" />
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-zinc-700 mb-2">
-              {ui.global.receipt_date}
+              {ui.global.date}
             </label>
             <CalendarForm register={register} setValue={setValue} />
           </div>
@@ -97,11 +102,23 @@ export function RequestFormDialog({ dialog, trigger, number }: Props) {
                   />
                   <Label
                     htmlFor={supplier.ipn}
-                    className="text-lg w-full border rounded-md py-4 px-4 pl-10 cursor-pointer hover:bg-zinc-800"
+                    className="text-lg w-full border rounded-md py-4 px-4 pl-10 cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-800"
                   >{`${supplier.name} (${supplier.ipn})`}</Label>
                 </div>
               ))}
             </RadioGroup>
+          </div>
+          <div className="flex items-center py-4">
+            <Checkbox
+              {...register("signature")}
+              id="signature"
+              defaultChecked
+              className="mr-2"
+              onCheckedChange={(value: boolean) => setValue("signature", value)}
+            />
+            <Label htmlFor="signature" className="cursor-pointer">
+              {ui.global.signature}
+            </Label>
           </div>
           <Button type="submit">{ui.global.generate}</Button>
         </form>

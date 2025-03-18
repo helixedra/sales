@@ -1,33 +1,44 @@
-"use client"
-import { useState } from "react"
-import { useForm, type SubmitHandler, useFormContext } from "react-hook-form"
-import { format } from "date-fns"
-import { uk as locale } from "date-fns/locale"
-import { CalendarIcon } from "lucide-react"
-import { Textarea } from "@/components/ui/textarea"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Calendar } from "@/components/ui/calendar"
-import { cn } from "@/lib/utils"
-import { Description } from "@radix-ui/react-dialog"
-import account from "@/app/data/account.json"
-import ui from "@/app/data/ui.json"
+"use client";
+import { useState } from "react";
+import { useForm, type SubmitHandler, useFormContext } from "react-hook-form";
+import { format } from "date-fns";
+import { uk as locale } from "date-fns/locale";
+import { CalendarIcon } from "lucide-react";
+// import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
+import { Description } from "@radix-ui/react-dialog";
+import account from "@/app/data/account.json";
+import ui from "@/app/data/ui.json";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 
 type FormValues = {
-  number: number
-  suppliers: string
-  date: Date
-}
+  number: number;
+  supplier: string;
+  date: Date;
+};
 
 type Props = {
-  dialog: boolean
-  trigger: () => void
-  number: number
-}
+  dialog: boolean;
+  trigger: () => void;
+  number: number;
+};
 
 export function ReceiptDialog({ dialog, trigger, number }: Props) {
-
   const {
     register,
     handleSubmit,
@@ -35,71 +46,111 @@ export function ReceiptDialog({ dialog, trigger, number }: Props) {
     setValue,
     formState: { errors },
   } = useForm<FormValues>({
-    defaultValues: { number: number, suppliers: account.finance.data, date: new Date() },
-  })
+    defaultValues: {
+      number: number,
+      supplier: account.finance.data_options[0].ipn,
+      date: new Date(),
+    },
+  });
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     window.open(
-      `/reports/receipt?number=${data.number}&suppliers=${encodeURIComponent(data.suppliers)}&date=${format(data.date, 'dd/MM/yyyy')}`,
+      `/reports/receipt?number=${data.number}&supplier=${encodeURIComponent(
+        data.supplier
+      )}&date=${format(data.date, "dd/MM/yyyy")}`,
       "_blank"
-    )
-  }
+    );
+  };
 
   return (
     <Dialog open={dialog} onOpenChange={trigger}>
       <DialogTrigger asChild></DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-lg font-semibold">{ui.global.generate_receipt}</DialogTitle>
+          <DialogTitle className="text-lg font-semibold">
+            {ui.global.generate_receipt}
+          </DialogTitle>
           <Description className="text-sm text-gray-500" />
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
-          <label className="block text-sm font-medium text-zinc-700 mb-2">{ui.global.receipt_date}</label>
-          <CalendarForm register={register} setValue={setValue} />
+            <label className="block text-sm font-medium text-zinc-700 mb-2">
+              {ui.global.date}
+            </label>
+            <CalendarForm register={register} setValue={setValue} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-zinc-700 mb-2">{ui.global.supplier}</label>
-            <Textarea
-              rows={5}
-              {...register("suppliers")}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-            />
-            {errors.suppliers && <span className="text-sm text-red-600">{ui.global.field_required}</span>}
+            <label className="block text-sm font-medium text-zinc-700 mb-2">
+              {ui.global.supplier}
+            </label>
+            <RadioGroup
+              defaultValue={account.finance.data_options[0].ipn}
+              onValueChange={(value) => setValue("supplier", value)}
+            >
+              {account.finance.data_options.map((supplier) => (
+                <div key={supplier.ipn} className="flex items-center relative">
+                  <RadioGroupItem
+                    value={supplier.ipn}
+                    {...register("supplier")}
+                    className="absolute left-4"
+                    id={supplier.ipn}
+                  />
+                  <Label
+                    htmlFor={supplier.ipn}
+                    className="text-lg w-full border rounded-md py-4 px-4 pl-10 cursor-pointer hover:bg-zinc-800"
+                  >{`${supplier.name} (${supplier.ipn})`}</Label>
+                </div>
+              ))}
+            </RadioGroup>
           </div>
           <Button type="submit">{ui.global.generate}</Button>
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
 
-export function CalendarForm({ register, setValue }: { register: any, setValue: any }) {
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
-  const [isOpen, setIsOpen] = useState(false)
+export function CalendarForm({
+  register,
+  setValue,
+}: {
+  register: any;
+  setValue: any;
+}) {
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(
+    new Date()
+  );
+  const [isOpen, setIsOpen] = useState(false);
 
   const field = {
     value: selectedDate,
     onChange: (date: Date | undefined | null) => {
       if (date) {
-        setSelectedDate(date)
-        setValue("date", date) 
+        setSelectedDate(date);
+        setValue("date", date);
       } else {
-        setSelectedDate(undefined)
-        setValue("date", undefined) 
+        setSelectedDate(undefined);
+        setValue("date", undefined);
       }
-      setIsOpen(false)
+      setIsOpen(false);
     },
-  }
+  };
 
   return (
     <>
-      <input type="hidden" {...register("date")} value={selectedDate ? selectedDate.toISOString() : ""} />
+      <input
+        type="hidden"
+        {...register("date")}
+        value={selectedDate ? selectedDate.toISOString() : ""}
+      />
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
           <Button
             variant={"outline"}
-            className={cn("w-[240px] pl-3 text-left font-normal", !field.value && "text-muted-foreground")}
+            className={cn(
+              "w-[240px] pl-3 text-left font-normal",
+              !field.value && "text-muted-foreground"
+            )}
           >
             {field.value ? (
               format(field.value, "PPP", { locale }).replace("-е", "")
@@ -121,6 +172,5 @@ export function CalendarForm({ register, setValue }: { register: any, setValue: 
         </PopoverContent>
       </Popover>
     </>
-  )
+  );
 }
-

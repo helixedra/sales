@@ -15,12 +15,14 @@ type RequestFormProps = {
   number: string;
   supplier: string;
   date: string;
+  signature?: boolean;
 };
 
 export function RequestFormContent({
   number,
   supplier,
   date,
+  signature,
 }: RequestFormProps) {
   const { isLoading, error, data: order } = useOrderData(Number(number));
   const supplierData = account.finance.data_options.find(
@@ -29,12 +31,14 @@ export function RequestFormContent({
   const isDiscounted =
     order?.items.map((item: Item) => Number(item.discount) > 0).length > 0;
 
+  console.log(signature);
+
   if (isLoading) return <Loader />;
 
   return (
     <>
       {order && (
-        <div className="p-[72px] font-mono text-sm">
+        <div className="p-12 font-mono text-sm">
           {/* Header */}
           <div className="header">
             <div>
@@ -201,9 +205,20 @@ export function RequestFormContent({
                 </td>
               </tr>
               <tr>
-                <td className="align-top w-1/2">
+                <td className="align-top w-1/2 relative">
                   <div className="h-12"></div>
                   <div className="mb-6">{date}</div>
+                  {signature && (
+                    <div className="">
+                      <Image
+                        src={supplierData?.signature || ""}
+                        alt="Signature"
+                        width={160}
+                        height={40}
+                        className="mix-blend-multiply absolute top-6 left-0"
+                      />
+                    </div>
+                  )}
                   <div>___________________</div>
                   <div>
                     <span className="ml-9">
