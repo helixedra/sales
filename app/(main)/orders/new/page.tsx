@@ -1,12 +1,12 @@
 "use client";
 import { Suspense } from "react";
-import NewSaleContent from "./NewSaleContent";
 import Loader from "@/components/shared/loader";
+import NewOrderFrom from "./NewOrderForm";
 
-export default function NewSale() {
+export default function NewSalePage() {
   return (
     <Suspense fallback={<Loader />}>
-      <NewSaleContent />
+      <NewOrderFrom />
     </Suspense>
   );
 }

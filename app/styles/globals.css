@@ -84,11 +84,29 @@ body {
   .cutLine {
     @apply truncate whitespace-nowrap overflow-hidden text-nowrap;
   }
-  input, textarea {
-    @apply  dark:border-zinc-800;
+
+  input,
+  textarea,
+  select {
+    @apply dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200;
   }
+
+  select {
+    @apply appearance-none dark:bg-zinc-900 dark:text-zinc-200;
+  }
+
+  /* Style select dropdown options in dark mode */
+  .dark select option {
+    @apply bg-zinc-900 text-zinc-200;
+  }
+
+  /* Fix dropdown background in Firefox */
+  .dark select optgroup {
+    @apply bg-zinc-900 text-zinc-200;
+  }
+
   hr {
-    @apply dark:border-zinc-800
+    @apply dark:border-zinc-800;
   }
 }
 
@@ -115,8 +133,6 @@ body {
 .status-canceled {
   color: rgb(231, 76, 60) !important;
 }
-
-
 
 @layer base {
   * {
