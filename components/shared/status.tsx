@@ -9,11 +9,15 @@ export default function Status({
   className?: string;
 }) {
   return (
-    <div className={`flex items-center justify-center md:justify-start ${className}`}>
+    <div
+      className={`flex items-center justify-center lg:justify-start ${className}`}
+    >
       <div style={{ marginRight: "8px" }} className={`status-${status}`}>
         &bull;
       </div>
-      <span className={`status-${status} hidden md:block`}>{name}</span>
+      <span className={`status-${status} hidden lg:block whitespace-nowrap`}>
+        {name}
+      </span>
     </div>
   );
 }

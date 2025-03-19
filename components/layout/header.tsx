@@ -47,7 +47,8 @@ export default function Header({
               pathname === href && "bg-zinc-800"
             )}`}
           >
-            <Icon style={iconSize} /> {label}
+            <Icon style={iconSize} />{" "}
+            <span className="hidden md:block">{label}</span>
           </Link>
         ))}
       </nav>
@@ -58,7 +59,11 @@ export default function Header({
           onClick={themeToggler}
           className="text-white hover:opacity-75 transition-opacity duration-300"
         >
-          {theme === "dark" ? <RiSunFill style={iconSize} /> : <RiMoonFill style={iconSize} />}
+          {theme === "dark" ? (
+            <RiSunFill style={iconSize} />
+          ) : (
+            <RiMoonFill style={iconSize} />
+          )}
         </Button>
         <Button
           variant="link"

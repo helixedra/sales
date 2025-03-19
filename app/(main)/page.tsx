@@ -18,15 +18,15 @@ import "@/app/styles/homepage.css";
 
 // Constants
 const TABLE_HEADERS: { key: keyof typeof ui.sales_table; width: string }[] = [
-  { key: "num", width: "w-[5%] max-w-[60px]" },
-  { key: "date", width: "w-[5%]" },
-  { key: "status", width: "w-[5%]" },
+  { key: "num", width: "w-[2%] max-w-[60px]" },
+  { key: "date", width: "w-[5%] hidden md:block" },
+  { key: "status", width: "w-[20px] md:w-[5%]" },
   { key: "customer", width: "w-[10%]" },
-  { key: "order", width: "w-[35%]" },
+  { key: "order", width: "w-[35%] hidden md:block" },
   { key: "total", width: "w-[5%]" },
-  { key: "left", width: "w-[5%]" },
-  { key: "deadline", width: "w-[5%]" },
-  { key: "days_left", width: "w-[5%] text-center" },
+  { key: "left", width: "w-[5%] hidden lg:block" },
+  { key: "deadline", width: "w-[5%] hidden xl:block" },
+  { key: "days_left", width: "w-[2%] text-center" },
 ];
 
 const stylingCancel = (status: string) =>
@@ -39,17 +39,29 @@ const OrderRow = ({ order }: { order: Order }) => {
   return (
     <Link href={`/orders/${order.number}`} className="block">
       <div className="TableRow">
-        <div className={`w-[5%] max-w-[60px] ${stylingCancel(order.status)}`}>{order.number}</div>
-        <div className={`w-[5%] ${stylingCancel(order.status)}`}>{orderDates(order).dateLocal}</div>
-        <div className="w-[5%] text-sm">
+        <div className={`w-[2%] max-w-[60px] ${stylingCancel(order.status)}`}>
+          {order.number}
+        </div>
+        <div
+          className={`w-[5%] hidden md:block ${stylingCancel(order.status)}`}
+        >
+          {orderDates(order).dateLocal}
+        </div>
+        <div className="w-[20px] md:w-[5%]">
           <Status
             status={order.status}
             name={statuses[order.status].name}
             className="opacity-100 no-line-through"
           />
         </div>
-        <div className={`w-[10%] cutLine ${stylingCancel(order.status)}`}>{order.client}</div>
-        <div className={`w-[35%] flex items-center ${stylingCancel(order.status)}`}>
+        <div className={`w-[10%] cutLine ${stylingCancel(order.status)}`}>
+          {order.client}
+        </div>
+        <div
+          className={`w-[35%] hidden md:flex items-center ${stylingCancel(
+            order.status
+          )}`}
+        >
           {order.items.map((item: Item) => (
             <div key={item.id} className="OrderItem" title={item.description}>
               {item.description}
@@ -57,15 +69,23 @@ const OrderRow = ({ order }: { order: Order }) => {
           ))}
         </div>
         <div className={`w-[5%] ${stylingCancel(order.status)}`}>
-          {orderTotal(order).currencyString}
+          {orderTotal(order).numberDigital}
         </div>
-        <div className={`w-[5%] ${stylingCancel(order.status)}`}>
-          {orderLeft(order).currencyString}
+        <div
+          className={`w-[5%] hidden lg:block ${stylingCancel(order.status)}`}
+        >
+          {orderLeft(order).numberDigital}
         </div>
-        <div className={`w-[5%] ${stylingCancel(order.status)}`}>
+        <div
+          className={`w-[5%] hidden xl:block ${stylingCancel(order.status)}`}
+        >
           {orderDates(order).deadlineLocalDate}
         </div>
-        <div className={`w-[5%] text-center ${stylingCancel(order.status)}`}>
+        <div
+          className={`w-[2%] text-center cutLine ${stylingCancel(
+            order.status
+          )}`}
+        >
           {orderDates(order).deadlineDaysLeft}
         </div>
       </div>
@@ -102,7 +122,9 @@ export default function OrdersPage() {
     return orders?.filter(
       (order: Order) =>
         order.client?.toLowerCase().includes(queryLower) ||
-        order.items.some((item: Item) => item.description?.toLowerCase().includes(queryLower)) ||
+        order.items.some((item: Item) =>
+          item.description?.toLowerCase().includes(queryLower)
+        ) ||
         order.number?.toString().includes(trimmedQuery)
     );
   }, [orders, searchQuery]);
@@ -150,10 +172,13 @@ export default function OrdersPage() {
         <div className="TableBody">
           {filteredOrders?.length === 0 ? (
             <div className="p-4 text-center text-gray-500">
-              {ui.global.nothing_found} "{searchQuery}"
+              {ui.global.nothing_found}{" "}
+              {searchQuery !== "" ? `"${searchQuery}"` : ""}
             </div>
           ) : (
-            filteredOrders?.map((order: Order) => <OrderRow key={order.id} order={order} />)
+            filteredOrders?.map((order: Order) => (
+              <OrderRow key={order.id} order={order} />
+            ))
           )}
         </div>
       </div>
