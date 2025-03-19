@@ -32,7 +32,8 @@ const calculateGlobalMetrics = (orders: Order[]): GlobalMetrics => {
     return acc + order.items.length;
   }, 0);
 
-  const averageCheck = totalItems > 0 ? Math.round(totalTurnover / totalItems) : 0;
+  const averageCheck =
+    totalItems > 0 ? Math.round(totalTurnover / totalItems) : 0;
 
   return { totalTurnover, totalItems, averageCheck };
 };
@@ -51,9 +52,13 @@ const groupOrdersByYear = (orders: Order[]): YearlySortedOrders => {
 };
 
 // Component for the yearly bar chart
-const YearlyBarChart = ({ sortedByYear }: { sortedByYear: YearlySortedOrders }) => {
+const YearlyBarChart = ({
+  sortedByYear,
+}: {
+  sortedByYear: YearlySortedOrders;
+}) => {
   return (
-    <div className="flex justify-around items-end mb-8 h-72">
+    <div className="flex justify-around items-end mb-8 h-full">
       {Object.entries(sortedByYear).map(([year, yearData]) => {
         const amount = calculateGross(yearData);
         // Calculate height based on amount, with a minimum height
@@ -75,7 +80,13 @@ const YearlyBarChart = ({ sortedByYear }: { sortedByYear: YearlySortedOrders }) 
 };
 
 // Component for metric cards
-const MetricCard = ({ label, value }: { label: string; value: string | number }) => {
+const MetricCard = ({
+  label,
+  value,
+}: {
+  label: string;
+  value: string | number;
+}) => {
   return (
     <div className="border border-zinc-400 border-opacity-20 rounded-lg p-6">
       <div className="text-gray-600 mb-2">{label}</div>
@@ -100,14 +111,23 @@ export default function Analytics() {
   const sortedByYear = groupOrdersByYear(orders);
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <main className="container mx-auto px-4 py-8">
+    <div className="min-h-screen flex flex-col justify-center absolute top-0 w-full -z-10">
+      <main className="container mx-auto px-4 py-8 h-full">
         <YearlyBarChart sortedByYear={sortedByYear} />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <MetricCard label={ui.global.total_turnover} value={moneyFormat(metrics.totalTurnover)} />
-          <MetricCard label={ui.global.total_units} value={`${metrics.totalItems} шт.`} />
-          <MetricCard label={ui.global.average_check} value={moneyFormat(metrics.averageCheck)} />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-auto">
+          <MetricCard
+            label={ui.global.total_turnover}
+            value={moneyFormat(metrics.totalTurnover)}
+          />
+          <MetricCard
+            label={ui.global.total_units}
+            value={`${metrics.totalItems} шт.`}
+          />
+          <MetricCard
+            label={ui.global.average_check}
+            value={moneyFormat(metrics.averageCheck)}
+          />
         </div>
       </main>
     </div>

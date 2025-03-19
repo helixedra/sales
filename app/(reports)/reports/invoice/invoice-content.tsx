@@ -18,18 +18,11 @@ type RequestFormProps = {
   signature?: boolean;
 };
 
-export function InvoiceContent({
-  number,
-  supplier,
-  date,
-  signature,
-}: RequestFormProps) {
+export function InvoiceContent({ number, supplier, date }: RequestFormProps) {
   const { isLoading, error, data: order } = useOrderData(Number(number));
   const acc = account.finance.data_options.find(
     (option) => option.ipn === supplier
   );
-  const isDiscounted =
-    order?.items.map((item: Item) => Number(item.discount) > 0).length > 0;
 
   if (isLoading) return <Loader />;
 

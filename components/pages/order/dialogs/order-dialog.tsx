@@ -78,12 +78,14 @@ export function OrderDialog({ dialog, trigger, data, fetchSalesData }: Props) {
             <Label>{ui.global.deadline_days}</Label>
             <Input type="number" {...register("deadline")} />
             <div className="absolute right-3 top-9 text-sm text-zinc-500">
-              {moment(data.date).add(Number(deadline), "days").format("DD.MM.YYYY")}
+              {moment(data.date)
+                .add(Number(deadline), "days")
+                .format("DD.MM.YYYY")}
             </div>
           </div>
           <div style={{ paddingBottom: "1rem" }}>
             <Label>{ui.global.prepayment}</Label>
-            <Input type="number" {...register("prepayment")} />
+            <Input type="number" step="0.01" {...register("prepayment")} />
           </div>
           <Button type="submit">{ui.global.save}</Button>
         </form>

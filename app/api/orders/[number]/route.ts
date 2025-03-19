@@ -1,12 +1,18 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { db } from "@/lib/db";
 import { Order } from "@/app/types/Order";
 
-export async function GET(request: Request, { params }: { params: { number: string } }) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ number: string }> }
+) {
   const { number } = await params;
 
   if (!number) {
-    return NextResponse.json({ error: "Sale number is required" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Sale number is required" },
+      { status: 400 }
+    );
   }
 
   try {
@@ -57,12 +63,17 @@ export async function GET(request: Request, { params }: { params: { number: stri
 
     // If items is returned as a JSON string, parse it
     if (typeof (order as Order).items === "string") {
-      (order as Order).items = JSON.parse((order as Order).items as unknown as string);
+      (order as Order).items = JSON.parse(
+        (order as Order).items as unknown as string
+      );
     }
 
     return NextResponse.json(order);
   } catch (error) {
     console.error("Error fetching sale:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }

@@ -1,12 +1,22 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { db } from "@/lib/db";
 
-export async function GET(request: Request, { params }: { params: { number: string } }) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ number: string }> }
+) {
   try {
     const { number } = await params;
 
-    // Запит до бази даних для отримання інформації про файли за номером "sale"
-    const stmt = db.prepare("SELECT * FROM uploads WHERE number = ? AND category = 'sale'");
+    if (!number) {
+      return NextResponse.json(
+        { error: "Sale number is required" },
+        { status: 400 }
+      );
+    }
+    const stmt = db.prepare(
+      "SELECT * FROM uploads WHERE number = ? AND category = 'sale'"
+    );
     const files = stmt.all(number);
 
     if (files.length === 0) {
@@ -18,7 +28,9 @@ export async function GET(request: Request, { params }: { params: { number: stri
   } catch (error) {
     console.error("Error fetching files:", error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Failed to fetch files" },
+      {
+        error: error instanceof Error ? error.message : "Failed to fetch files",
+      },
       { status: 500 }
     );
   }

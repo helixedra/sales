@@ -5,7 +5,7 @@ import ui from "@/app/data/ui.json";
 export async function generateMetadata({
   searchParams,
 }: {
-  searchParams: { [key: string]: string };
+  searchParams: Promise<{ [key: string]: string }>;
 }) {
   const { number, date } = await searchParams;
   return {
@@ -16,7 +16,7 @@ export async function generateMetadata({
 export default async function ReceiptPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string };
+  searchParams: Promise<{ [key: string]: string }>;
 }) {
   // Access query parameters from searchParams
   const { number, supplier, date, signature } = await searchParams;

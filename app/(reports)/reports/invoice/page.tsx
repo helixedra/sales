@@ -6,9 +6,10 @@ import ui from "@/app/data/ui.json";
 export async function generateMetadata({
   searchParams,
 }: {
-  searchParams: { [key: string]: string };
+  searchParams: Promise<{ [key: string]: string }>;
 }) {
-  const { number, date } = await searchParams;
+  const resolvedSearchParams = await searchParams;
+  const { number, date } = resolvedSearchParams;
   return {
     title: `${ui.global.invoice} ${ui.global.num} ${number} ${ui.global.from} ${date}`,
   };
@@ -17,9 +18,10 @@ export async function generateMetadata({
 export default async function InvoicePage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string };
+  searchParams: Promise<{ [key: string]: string }>;
 }) {
-  const { number, supplier, date } = await searchParams;
+  const resolvedSearchParams = await searchParams;
+  const { number, supplier, date } = resolvedSearchParams;
 
   return (
     <ReportLayout>
