@@ -6,6 +6,7 @@ import { orderTotal } from "@/lib/order-numbers";
 import { moneyFormat } from "@/lib/format";
 import Loader from "@/components/shared/loader";
 import ui from "@/app/data/ui.json";
+import { Item } from "@/app/types/Item";
 
 // Types
 type YearlySortedOrders = {
@@ -25,11 +26,14 @@ const calculateGross = (orders: Order[]): number => {
   }, 0);
 };
 
+const itemsCount = (items: Item[]): number =>
+  items.reduce((acc, item) => acc + Number(item.quantity), 0);
+
 const calculateGlobalMetrics = (orders: Order[]): GlobalMetrics => {
   const totalTurnover = calculateGross(orders);
 
   const totalItems = orders.reduce((acc, order) => {
-    return acc + order.items.length;
+    return acc + itemsCount(order.items);
   }, 0);
 
   const averageCheck =
@@ -99,6 +103,8 @@ const MetricCard = ({
 export default function Analytics() {
   const { isLoading, data: orders = [] } = useAllOrdersData();
 
+  const filteredOrders = orders.filter((order) => order.status === "finished");
+
   useEffect(() => {
     document.title = `${ui.pages.analytics} - ${ui.pages.site_name}`;
   }, []);
@@ -107,8 +113,8 @@ export default function Analytics() {
     return <Loader />;
   }
 
-  const metrics = calculateGlobalMetrics(orders);
-  const sortedByYear = groupOrdersByYear(orders);
+  const metrics = calculateGlobalMetrics(filteredOrders);
+  const sortedByYear = groupOrdersByYear(filteredOrders);
 
   return (
     <div className="min-h-screen flex flex-col justify-center absolute top-0 w-full -z-10">
