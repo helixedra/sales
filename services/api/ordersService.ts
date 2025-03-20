@@ -37,7 +37,7 @@ export const ordersService = {
 
   // Upload files
   uploadFiles: async (formData: any): Promise<any> => {
-    const response = await axios.post("/api/sales/upload", formData, {
+    const response = await api.post("/orders/files/upload", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -46,7 +46,10 @@ export const ordersService = {
   },
 
   // Update order status
-  updateOrderStatus: async (data: { number: number; status: string }): Promise<any> => {
+  updateOrderStatus: async (data: {
+    number: number;
+    status: string;
+  }): Promise<any> => {
     const response = await api.post("/orders/update/status", data);
     return response.data;
   },
@@ -58,7 +61,10 @@ export const ordersService = {
   },
 
   // Update comment
-  updateComment: async (data: { number: number; comment: string }): Promise<any> => {
+  updateComment: async (data: {
+    number: number;
+    comment: string;
+  }): Promise<any> => {
     const response = await api.post("/orders/update/comment", data);
     return response.data;
   },

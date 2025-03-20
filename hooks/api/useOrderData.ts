@@ -58,7 +58,8 @@ export function useUpdateOrderStatus() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: { number: number; status: string }) => ordersService.updateOrderStatus(data),
+    mutationFn: (data: { number: number; status: string }) =>
+      ordersService.updateOrderStatus(data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["orders", variables.number] });
     },
@@ -70,7 +71,8 @@ export function useUpdateComment() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: { number: number; comment: string }) => ordersService.updateComment(data),
+    mutationFn: (data: { number: number; comment: string }) =>
+      ordersService.updateComment(data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["orders", variables.number] });
     },
@@ -103,6 +105,9 @@ export function useUploadFiles(number: number) {
     mutationFn: (formData: FormData) => ordersService.uploadFiles(formData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["files", number] });
+    },
+    onError: (error) => {
+      console.error(error);
     },
   });
 }

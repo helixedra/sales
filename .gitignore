@@ -4,6 +4,8 @@
 /node_modules
 .vscode
 .idea
+/uploads/*
+!uploads/.gitkeep
 
 /.pnp
 .pnp.*
