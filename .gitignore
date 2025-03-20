@@ -6,6 +6,9 @@
 .idea
 /uploads/*
 !uploads/.gitkeep
+/backups
+/backups/*
+!backups/.gitkeep
 
 /.pnp
 .pnp.*
