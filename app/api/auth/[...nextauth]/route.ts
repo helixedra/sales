@@ -14,6 +14,7 @@ declare module "next-auth" {
   }
 }
 
+// TODO: should be username instead of email
 const handler = NextAuth({
   providers: [
     CredentialsProvider({
@@ -27,7 +28,7 @@ const handler = NextAuth({
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error("Please enter your email and password");
+          throw new Error("Please enter your username and password");
         }
 
         const { email, password } = credentials;
@@ -41,15 +42,19 @@ const handler = NextAuth({
           password: string;
         };
 
-        if (!user) {
-          throw new Error("User not found");
-        }
-
         const isValidPassword = await bcrypt.compare(password, user.password);
 
-        if (!isValidPassword) {
-          throw new Error("Wrong password");
+        if (!user || !isValidPassword) {
+          throw new Error("Wrong username or password");
         }
+
+        // if (!user) {
+        //   throw new Error("User not found");
+        // }
+
+        // if (!isValidPassword) {
+        //   throw new Error("Wrong password");
+        // }
 
         return { id: user.id, email: user.email, name: user.name };
       },
