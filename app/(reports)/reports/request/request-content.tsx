@@ -55,24 +55,24 @@ export function RequestFormContent({
           <table className="w-full border-collapse mb-8" cellPadding="8">
             <thead>
               <tr className="font-semibold border-t-[3px] border-t-double border-t-black border-b border-b-black">
-                <td className="px-4 border-r border-gray-300">
+                <td className="px-4 w-1/12 border-r border-gray-300">
                   {ui.global.num}
                 </td>
-                <td className="px-4 border-r border-gray-300">
+                <td className="px-4 w-8/12 border-r border-gray-300">
                   {ui.global.product_name}
                 </td>
-                <td className="px-4 text-right whitespace-nowrap border-r border-gray-300">
+                <td className="px-4 w-1/12 text-right whitespace-nowrap border-r border-gray-300">
                   {ui.global.unit_price}
                 </td>
-                <td className="px-4 text-center whitespace-nowrap border-r border-gray-300">
+                <td className="px-4 w-0.5/12 text-center whitespace-nowrap border-r border-gray-300">
                   {ui.global.quantity}
                 </td>
                 {isDiscounted && (
-                  <td className="px-4 text-right whitespace-nowrap border-r border-gray-300">
+                  <td className="px-4 w-1/12 text-right whitespace-nowrap border-r border-gray-300">
                     {ui.global.price_with_discount}
                   </td>
                 )}
-                <td className="px-4 text-right whitespace-nowrap">
+                <td className="px-4 w-1/12 text-right whitespace-nowrap">
                   {ui.global.total}, {account.finance.currency_name}
                 </td>
               </tr>
@@ -83,24 +83,24 @@ export function RequestFormContent({
                   key={item.id}
                   className="orderline border-b border-gray-300"
                 >
-                  <td className="px-4 text-center border-r border-gray-300">
+                  <td className="px-4 w-1/12 text-center border-r border-gray-300">
                     {index + 1}
                   </td>
-                  <td className="px-4 border-r border-gray-300">
+                  <td className="px-4 w-8/12 border-r border-gray-300">
                     {item.description}
                   </td>
-                  <td className="px-4 text-right whitespace-nowrap border-r border-gray-300">
+                  <td className="px-4 w-1/12 text-right whitespace-nowrap border-r border-gray-300">
                     {moneyFormatDigital(item.price)}
                   </td>
-                  <td className="px-4 text-center whitespace-nowrap border-r border-gray-300">
+                  <td className="px-4 w-0.5/12 text-center whitespace-nowrap border-r border-gray-300">
                     {item.quantity}
                   </td>
                   {isDiscounted && (
-                    <td className="px-4 text-right whitespace-nowrap border-r border-gray-300">
+                    <td className="px-4 w-1/12 text-right whitespace-nowrap border-r border-gray-300">
                       {discountNumbers(item).discountedPriceFormatted}
                     </td>
                   )}
-                  <td className="px-4 text-right whitespace-nowrap">
+                  <td className="px-4 w-1/12 text-right whitespace-nowrap">
                     {moneyFormatDigital(item.total)}
                   </td>
                 </tr>

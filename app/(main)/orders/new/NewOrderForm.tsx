@@ -109,7 +109,7 @@ export default function NewOrderForm() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
+    <div className="mx-auto p-6">
       <div className="mb-6 flex items-center">
         <Link href="/" className="inline-flex items-center mr-4">
           <RiArrowLeftFill className="text-xl" />
@@ -216,22 +216,22 @@ export default function NewOrderForm() {
                 <th className="p-2 text-sm text-left w-0.5/12">
                   {ui.global.num}
                 </th>
-                <th className="p-2 text-sm text-left w-4/12">
+                <th className="p-2 text-sm text-left w-7/12">
                   {ui.global.description}
                 </th>
                 <th className="p-2 text-sm text-center w-1/12">
                   {ui.order.qty}
                 </th>
-                <th className="p-2 text-sm text-center w-2/12">
+                <th className="p-2 text-sm text-center w-1/12">
                   {ui.order.price}
                 </th>
-                <th className="p-2 text-sm text-center w-2/12">
+                <th className="p-2 text-sm text-center w-1/12">
                   {ui.order.sum}
                 </th>
-                <th className="p-2 text-sm text-center w-1/12">
+                <th className="p-2 text-sm text-center w-0.5/12">
                   {ui.order.discount}
                 </th>
-                <th className="p-2 text-sm text-center w-2/12">
+                <th className="p-2 text-sm text-center w-1/12">
                   {ui.order.sum_with_discount}
                 </th>
               </tr>

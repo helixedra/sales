@@ -115,42 +115,46 @@ export default function OrderPage() {
       />
 
       <div className="orderInfo justify-between border border-zinc-200 dark:border-zinc-800 rounded-sm px-6 m-6">
-        <div className="grid grid-cols-10 divide-x-1 text-left py-4 text-default dark:text-zinc-600 text-sm gap-8 items-center">
-          <div className="col-span-2 cutLine">{ui.global.customer}</div>
-          <div className="cutLine">{ui.global.phone}</div>
-          <div className="cutLine">{ui.global.email}</div>
-          <div className="col-span-2 cutLine">{ui.global.address}</div>
-          <div className="cutLine">{ui.global.order_sum}</div>
-          <div className="cutLine">{ui.global.paid}</div>
-          <div className="cutLine">{ui.global.left}</div>
-          <div className="cutLine flex items-center justify-between">
+        <div className="w-full flex text-left py-6 text-default dark:text-zinc-600 text-sm items-center relative">
+          <div className="cutLine px-1 w-2/12">{ui.global.customer}</div>
+          <div className="cutLine px-1 w-1/12">{ui.global.phone}</div>
+          {order.email && (
+            <div className="cutLine px-1 w-1/12">{ui.global.email}</div>
+          )}
+          <div className="cutLine px-1 flex-grow">{ui.global.address}</div>
+          <div className="cutLine px-1 w-1/12">{ui.global.order_sum}</div>
+          <div className="cutLine px-1 w-1/12">{ui.global.paid}</div>
+          <div className="cutLine px-1 w-1/12">{ui.global.left}</div>
+          <div className="cutLine px-1 w-1/12 flex items-center justify-between">
             {ui.global.deadline}
-            <div>
-              <Button
-                variant={"outline"}
-                className="flex ml-auto text-black dark:text-white"
-                onClick={() => toggleDialog("orderEdit", !dialogs.orderEdit)}
-              >
-                <RiEditFill />
-              </Button>
-            </div>
+          </div>
+          <div className="flex px-1 justify-end absolute -right-2 top-4">
+            <Button
+              variant={"outline"}
+              className="flex ml-auto text-black dark:text-white"
+              onClick={() => toggleDialog("orderEdit", !dialogs.orderEdit)}
+            >
+              <RiEditFill />
+            </Button>
           </div>
         </div>
-        <div className="grid grid-cols-10 divide-x text-left gap-8 py-6 border-t border-zinc-200 dark:border-zinc-800 divide-zinc-200 dark:divide-zinc-800">
-          <div className="pl-4 break-all col-span-2">{order.client}</div>
-          <div className="pl-4">{order.phone}</div>
-          <div className="pl-4">{order.email}</div>
-          <div className="col-span-2 pl-4">{order.address}</div>
-          <div className="pl-4">{orderTotal(order).currencyString}</div>
-          <div className="pl-4">{moneyFormat(order.prepayment)}</div>
+        <div className="flex justify-between text-left py-6 border-t border-zinc-200 dark:border-zinc-800 divide-zinc-200 dark:divide-zinc-800">
+          <div className="w-2/12 px-1 break-all">{order.client}</div>
+          <div className="w-1/12 px-1">{order.phone}</div>
+          {order.email && <div className="w-1/12 px-1">{order.email}</div>}
+          <div className="flex-grow px-1">{order.address}</div>
+          <div className="w-1/12 px-1">{orderTotal(order).currencyString}</div>
+          <div className="w-1/12 px-1">{moneyFormat(order.prepayment)}</div>
           <div
             className={
-              orderLeft(order).number > 0 ? "text-red-500 pl-4" : "pl-4"
+              orderLeft(order).number > 0
+                ? "text-red-500 w-1/12 px-1"
+                : "w-1/12 px-1"
             }
           >
             {orderLeft(order).currencyString}
           </div>
-          <div className="pl-4">
+          <div className="w-1/12 px-1">
             {orderDates(order).deadlineLocalDate}
             <span className="text-zinc-500 bg-zinc-200 dark:bg-zinc-800 px-1 ml-2 rounded-sm">
               {orderDates(order).deadlineDaysLeft}
