@@ -5,12 +5,20 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    const { category, name, thickness, length, width, note } = body;
+    const { category, name, thickness, length, width, quantity, note } = body;
 
     const stmt = db.prepare(
-      "INSERT INTO inventory_items (category, name, thickness, length, width, note) VALUES (?, ?, ?, ?, ?, ?)"
+      "INSERT INTO inventory_items (category, name, thickness, length, width, quantity, note) VALUES (?, ?, ?, ?, ?, ?, ?)"
     );
-    const info = stmt.run(category, name, thickness, length, width, note);
+    const info = stmt.run(
+      category,
+      name,
+      thickness,
+      length,
+      width,
+      quantity,
+      note
+    );
 
     return NextResponse.json(
       { message: "Inventory added successfully" },

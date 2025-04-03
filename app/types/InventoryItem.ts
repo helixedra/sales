@@ -5,5 +5,6 @@ export type InventoryItem = {
   thickness: string | null;
   length: string | null;
   width: string | null;
+  quantity: string | null;
   note: string | null;
 };

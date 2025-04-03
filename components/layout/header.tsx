@@ -6,13 +6,29 @@ import {
   RiBox3Fill,
   RiBarChart2Fill,
   RiHome6Fill,
-  RiLogoutBoxRFill,
   RiMoonFill,
   RiSunFill,
 } from "react-icons/ri";
 import { Button, buttonVariants } from "@/components/ui/button";
 import ui from "@/app/data/ui.json";
 import clsx from "clsx";
+
+import { Cloud, LifeBuoy, LogOut, Settings, User } from "lucide-react";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const navLinks = [
   { href: "/", label: ui.mainmenu.sales, icon: RiBox3Fill },
@@ -36,15 +52,15 @@ export default function Header({
   };
 
   return (
-    <header className="flex justify-between items-center space-x-4 p-2 bg-zinc-900 text-white">
+    <header className="flex justify-between items-center space-x-4 p-2 bg-zinc-100 dark:bg-zinc-900 text-black dark:text-white border-b border-zinc-200/50 dark:border-zinc-800">
       <nav className="flex space-x-2">
         {navLinks.map(({ href, label, icon: Icon }) => (
           <Link
             key={href}
             href={href}
-            className={`text-white ${clsx(
+            className={`text-black dark:text-white ${clsx(
               buttonVariants({ variant: "link" }),
-              pathname === href && "bg-zinc-800"
+              pathname === href && "bg-zinc-200 dark:bg-zinc-800"
             )}`}
           >
             <Icon style={iconSize} />{" "}
@@ -53,26 +69,63 @@ export default function Header({
         ))}
       </nav>
 
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-2 pr-2">
         <Button
           variant="link"
           onClick={themeToggler}
-          className="text-white hover:opacity-75 transition-opacity duration-300"
+          className="text-black dark:text-white hover:opacity-75 transition-opacity duration-300"
         >
           {theme === "dark" ? (
-            <RiSunFill style={iconSize} />
+            <RiSunFill size={18} />
           ) : (
-            <RiMoonFill style={iconSize} />
+            <RiMoonFill size={18} />
           )}
         </Button>
-        <Button
-          variant="link"
-          onClick={handleLogout}
-          className="text-white hover:opacity-75 transition-opacity duration-300"
-        >
-          <RiLogoutBoxRFill style={iconSize} />
-        </Button>
+        <DropdownMenuAccount logout={handleLogout} />
       </div>
     </header>
+  );
+}
+
+export function DropdownMenuAccount({ logout }: { logout: () => void }) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <div className="flex items-center justify-center text-black dark:text-white bg-zinc-300 dark:bg-zinc-600 w-8 h-8 rounded-full hover:opacity-75 transition-opacity duration-300 cursor-pointer">
+          <span className="text-xs font-bold">LA</span>
+        </div>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        className="w-48 border-zinc-200 dark:border-zinc-800"
+        align="end"
+      >
+        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem>
+            <User />
+            <span>Profile</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <Settings />
+            <span>Settings</span>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem>
+          <LifeBuoy />
+          <span>Support</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem disabled>
+          <Cloud />
+          <span>API</span>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={logout}>
+          <LogOut />
+          <span>Log out</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

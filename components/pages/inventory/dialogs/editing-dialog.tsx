@@ -31,7 +31,9 @@ export default function EditingDialog({
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>{ui.global.edit_item}</DialogTitle>
-          <DialogDescription>{ui.global.edit_item_description}</DialogDescription>
+          <DialogDescription>
+            {ui.global.edit_item_description}
+          </DialogDescription>
         </DialogHeader>
 
         {editingItem && (
@@ -43,7 +45,9 @@ export default function EditingDialog({
               <Input
                 id="category"
                 value={editingItem.category || ""}
-                onChange={(e) => setEditingItem({ ...editingItem, category: e.target.value })}
+                onChange={(e) =>
+                  setEditingItem({ ...editingItem, category: e.target.value })
+                }
                 className="col-span-3"
               />
             </div>
@@ -55,7 +59,9 @@ export default function EditingDialog({
               <Input
                 id="name"
                 value={editingItem.name || ""}
-                onChange={(e) => setEditingItem({ ...editingItem, name: e.target.value })}
+                onChange={(e) =>
+                  setEditingItem({ ...editingItem, name: e.target.value })
+                }
                 className="col-span-3"
               />
             </div>
@@ -67,7 +73,9 @@ export default function EditingDialog({
               <Input
                 id="thickness"
                 value={editingItem.thickness || ""}
-                onChange={(e) => setEditingItem({ ...editingItem, thickness: e.target.value })}
+                onChange={(e) =>
+                  setEditingItem({ ...editingItem, thickness: e.target.value })
+                }
                 className="col-span-3"
               />
             </div>
@@ -79,7 +87,9 @@ export default function EditingDialog({
               <Input
                 id="length"
                 value={editingItem.length || ""}
-                onChange={(e) => setEditingItem({ ...editingItem, length: e.target.value })}
+                onChange={(e) =>
+                  setEditingItem({ ...editingItem, length: e.target.value })
+                }
                 className="col-span-3"
               />
             </div>
@@ -91,7 +101,22 @@ export default function EditingDialog({
               <Input
                 id="width"
                 value={editingItem.width || ""}
-                onChange={(e) => setEditingItem({ ...editingItem, width: e.target.value })}
+                onChange={(e) =>
+                  setEditingItem({ ...editingItem, width: e.target.value })
+                }
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="quantity" className="text-right">
+                {ui.global.quantity}
+              </Label>
+              <Input
+                id="quantity"
+                value={editingItem.quantity || ""}
+                onChange={(e) =>
+                  setEditingItem({ ...editingItem, quantity: e.target.value })
+                }
                 className="col-span-3"
               />
             </div>
@@ -103,7 +128,12 @@ export default function EditingDialog({
               <Input
                 id="note"
                 value={editingItem.note || ""}
-                onChange={(e) => setEditingItem({ ...editingItem, note: e.target.value || null })}
+                onChange={(e) =>
+                  setEditingItem({
+                    ...editingItem,
+                    note: e.target.value || null,
+                  })
+                }
                 className="col-span-3"
               />
             </div>

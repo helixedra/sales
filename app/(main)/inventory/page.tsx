@@ -34,14 +34,22 @@ export default function InventoryPage() {
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-  const { data: inventory, isLoading, isError, refetch } = useAllInventoryData();
+  const {
+    data: inventory,
+    isLoading,
+    isError,
+    refetch,
+  } = useAllInventoryData();
 
   // Data filtering
   const filteredInventory = inventory?.filter((item: InventoryItem) => {
-    const matchesCategory = categoryFilter ? item.category === categoryFilter : true;
+    const matchesCategory = categoryFilter
+      ? item.category === categoryFilter
+      : true;
     const matchesSearch = searchTerm
       ? item.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (item.note && item.note.toLowerCase().includes(searchTerm.toLowerCase()))
+        (item.note &&
+          item.note.toLowerCase().includes(searchTerm.toLowerCase()))
       : true;
     return matchesCategory && matchesSearch;
   });
@@ -64,6 +72,7 @@ export default function InventoryPage() {
     thickness: "",
     length: "",
     width: "",
+    quantity: "1",
     note: "",
   };
 
@@ -142,24 +151,23 @@ export default function InventoryPage() {
 
   return (
     <>
-      <div className="topBar flex items-center p-6">
+      <div className="flex justify-between bg-white dark:bg-zinc-900 border-b border-zinc-100 dark:border-zinc-800flex items-center p-6">
         <Button variant="default" onClick={handleNewItem}>
           <RiAddFill style={{ width: "24px", height: "24px" }} />
           {ui.global.add_line}
         </Button>
+        <Filter
+          categories={categories as string[]}
+          categoryFilter={categoryFilter}
+          setCategoryFilter={setCategoryFilter}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+        />
       </div>
 
-      <div className="py-8">
-        <div className=" p-6">
+      <div className="pb-8">
+        <div className="p-6">
           <div>
-            <Filter
-              categories={categories as string[]}
-              categoryFilter={categoryFilter}
-              setCategoryFilter={setCategoryFilter}
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-            />
-
             {selectedItems.length > 0 && (
               <SelectionPanel
                 selectedItems={selectedItems}
@@ -172,11 +180,15 @@ export default function InventoryPage() {
                 <Loader />
               </div>
             ) : isError ? (
-              <div className="text-center text-red-500 py-8">{ui.global.error_loading_data}</div>
+              <div className="text-center text-red-500 py-8">
+                {ui.global.error_loading_data}
+              </div>
             ) : (
               <div className="overflow-x-auto">
                 <Table>
-                  <TableCaption>{filteredInventory?.length || 0} items</TableCaption>
+                  <TableCaption>
+                    {filteredInventory?.length || 0} items
+                  </TableCaption>
                   <TableHeader>
                     <TableRow>
                       <TableHead className="w-12">
@@ -193,11 +205,22 @@ export default function InventoryPage() {
                       </TableHead>
                       <TableHead>{ui.global.category}</TableHead>
                       <TableHead>{ui.global.name}</TableHead>
-                      <TableHead className="text-right">{ui.global.thickness_mm}</TableHead>
-                      <TableHead className="text-right">{ui.global.length_mm}</TableHead>
-                      <TableHead className="text-right">{ui.global.width_mm}</TableHead>
+                      <TableHead className="text-right">
+                        {ui.global.thickness_mm}
+                      </TableHead>
+                      <TableHead className="text-right">
+                        {ui.global.length_mm}
+                      </TableHead>
+                      <TableHead className="text-right">
+                        {ui.global.width_mm}
+                      </TableHead>
+                      <TableHead className="text-right">
+                        {ui.global.quantity}
+                      </TableHead>
                       <TableHead>{ui.global.note}</TableHead>
-                      <TableHead className="text-right">{ui.global.actions}</TableHead>
+                      <TableHead className="text-right">
+                        {ui.global.actions}
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -213,18 +236,33 @@ export default function InventoryPage() {
                         >
                           <TableCell>
                             <Checkbox
-                              checked={item.id !== null && selectedItems.includes(item.id)}
+                              checked={
+                                item.id !== null &&
+                                selectedItems.includes(item.id)
+                              }
                               onCheckedChange={(checked) =>
-                                item.id !== null && handleCheckboxChange(item.id, checked === true)
+                                item.id !== null &&
+                                handleCheckboxChange(item.id, checked === true)
                               }
                               aria-label={`${ui.global.select} ${item.name}`}
                             />
                           </TableCell>
                           <TableCell>{item.category}</TableCell>
-                          <TableCell className="font-medium">{item.name || "-"}</TableCell>
-                          <TableCell className="text-right">{item.thickness || "-"}</TableCell>
-                          <TableCell className="text-right">{item.length || "-"}</TableCell>
-                          <TableCell className="text-right">{item.width || "-"}</TableCell>
+                          <TableCell className="font-medium">
+                            {item.name || "-"}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {item.thickness || "-"}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {item.length || "-"}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {item.width || "-"}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {item.quantity || "-"}
+                          </TableCell>
                           <TableCell>{item.note || "-"}</TableCell>
                           <TableCell className="text-right">
                             <Button
@@ -261,7 +299,9 @@ export default function InventoryPage() {
 
         <ConfirmationDialog
           isDeleteDialogOpen={isDeleteDialogOpen}
-          setIsDeleteDialogOpen={() => setIsDeleteDialogOpen(!isDeleteDialogOpen)}
+          setIsDeleteDialogOpen={() =>
+            setIsDeleteDialogOpen(!isDeleteDialogOpen)
+          }
           selectedItems={selectedItems}
           handleDeleteSelected={handleDeleteSelected}
         />

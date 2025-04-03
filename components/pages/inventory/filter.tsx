@@ -26,11 +26,13 @@ export default function Filter({
   setSearchTerm,
 }: Props) {
   return (
-    <div className="flex flex-col md:flex-row gap-4 mb-6">
-      <div className="w-full md:w-1/3">
+    <div className="flex flex-col justify-end md:flex-row gap-4">
+      <div className="w-[400px] relative">
         <Select
           value={categoryFilter === null ? "null" : categoryFilter}
-          onValueChange={(value) => setCategoryFilter(value === "null" ? null : value)}
+          onValueChange={(value) =>
+            setCategoryFilter(value === "null" ? null : value)
+          }
         >
           <SelectTrigger>
             <SelectValue placeholder={ui.global.all_categories} />
@@ -47,7 +49,7 @@ export default function Filter({
           </SelectContent>
         </Select>
       </div>
-      <div className="w-full md:w-2/3 relative">
+      <div className="w-[400px] relative">
         <RiSearchLine
           className="absolute opacity-50 top-3 left-3"
           style={{ width: "16px", height: "16px" }}
