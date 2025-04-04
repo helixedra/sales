@@ -151,7 +151,7 @@ export default function InventoryPage() {
 
   return (
     <>
-      <div className="flex justify-between bg-white dark:bg-zinc-900 border-b border-zinc-100 dark:border-zinc-800flex items-center p-6">
+      <div className="flex justify-between bg-white dark:bg-zinc-900 border-b border-zinc-100 dark:border-zinc-800 items-center p-6">
         <Button variant="default" onClick={handleNewItem}>
           <RiAddFill style={{ width: "24px", height: "24px" }} />
           {ui.global.add_line}
