@@ -121,7 +121,8 @@
     "price": "Ціна",
     "sum": "Сума",
     "discount": "Знижка",
-    "sum_with_discount": "Сума зі знижкою"
+    "sum_with_discount": "Сума зі знижкою",
+    "price_with_discount": "Ціна зі знижкою"
   },
 
   "mainmenu": {

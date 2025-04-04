@@ -15,3 +15,21 @@ export function discountNumbers(item: Item) {
     discountAmountFormatted: moneyFormatDigital(discountAmount),
   };
 }
+
+export function itemNumbers(item: Item) {
+  const discount = discountNumbers(item);
+  const totalWithDiscount = discount.discountedPrice * Number(item.quantity);
+  const totalWithDiscountFormatted = moneyFormatDigital(totalWithDiscount);
+  const totalDiscount = discount.discountAmount;
+  const totalDiscountFormatted = moneyFormatDigital(totalDiscount);
+  const total = Number(item.price) * Number(item.quantity);
+  const totalFormatted = moneyFormatDigital(total);
+  return {
+    total,
+    totalFormatted,
+    totalWithDiscount,
+    totalWithDiscountFormatted,
+    totalDiscount,
+    totalDiscountFormatted,
+  };
+}

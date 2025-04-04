@@ -30,11 +30,19 @@ type Props = {
   requestFormDialog: () => void;
 };
 
-export function TopBar({ data, commentDialog, uploadDialog, handleStatusChange, invoiceDialog, receiptDialog, requestFormDialog }: Props) {
+export function TopBar({
+  data,
+  commentDialog,
+  uploadDialog,
+  handleStatusChange,
+  invoiceDialog,
+  receiptDialog,
+  requestFormDialog,
+}: Props) {
   const date = moment(data.date).format("DD.MM.YYYY");
   return (
-    <div className="topBar flex p-6 items-center">
-      <div className="flex items-center text-4xl mr-6 pr-6 border-r border-1  border-gray-200 dark:border-zinc-700 border-solid">
+    <div className="flex p-6 items-center border-b border-zinc-100 dark:border-zinc-800">
+      <div className="flex items-center text-4xl mr-6 pr-6 border-r border-1 border-gray-200 dark:border-zinc-700 border-solid">
         <div className="mr-4">№ {data.number}</div>
         <div className="text-xl opacity-50">від {date}</div>
       </div>
@@ -50,7 +58,11 @@ export function TopBar({ data, commentDialog, uploadDialog, handleStatusChange, 
           </SelectTrigger>
           <SelectContent>
             {Object.keys(ui.status).map((status) => (
-              <SelectItem key={status} value={status} className={`status-${status}`}>
+              <SelectItem
+                key={status}
+                value={status}
+                className={`status-${status}`}
+              >
                 {statuses[status].name || status}
               </SelectItem>
             ))}

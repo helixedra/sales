@@ -10,6 +10,7 @@ import { moneyFormatDigital } from "@/lib/format";
 import Image from "next/image";
 import options from "@/app/data/options.json";
 import { discountNumbers } from "@/lib/item-numbers";
+import { itemNumbers } from "@/lib/item-numbers";
 
 type RequestFormProps = {
   number: string;
@@ -117,10 +118,10 @@ export function InvoiceContent({ number, supplier, date }: RequestFormProps) {
                     {item.quantity}
                   </td>
                   <td className="p-2 text-right border-r border-black">
-                    {moneyFormatDigital(item.price)}
+                    {discountNumbers(item).discountedPriceFormatted}
                   </td>
                   <td className="p-2 text-right">
-                    {moneyFormatDigital(item.total)}
+                    {itemNumbers(item).totalWithDiscountFormatted}
                   </td>
                 </tr>
               ))}

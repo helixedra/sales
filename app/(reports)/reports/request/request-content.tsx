@@ -10,6 +10,7 @@ import { moneyFormatDigital } from "@/lib/format";
 import Image from "next/image";
 import options from "@/app/data/options.json";
 import { discountNumbers } from "@/lib/item-numbers";
+import { itemNumbers } from "@/lib/item-numbers";
 
 type RequestFormProps = {
   number: string;
@@ -101,7 +102,7 @@ export function RequestFormContent({
                     </td>
                   )}
                   <td className="px-4 w-1/12 text-right whitespace-nowrap">
-                    {moneyFormatDigital(item.total)}
+                    {itemNumbers(item).totalWithDiscountFormatted}
                   </td>
                 </tr>
               ))}

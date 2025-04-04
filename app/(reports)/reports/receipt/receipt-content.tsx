@@ -9,6 +9,7 @@ import account from "@/app/data/account.json";
 import { num2str } from "@/lib/num-words";
 import { moneyFormatDigital } from "@/lib/format";
 import Image from "next/image";
+import { itemNumbers, discountNumbers } from "@/lib/item-numbers";
 
 type ReceiptContentProps = {
   number: string;
@@ -80,13 +81,13 @@ export function ReceiptContent({
                   <td className="text-center orders p-2">{index + 1}</td>
                   <td className="p-2">{item.description}</td>
                   <td className="text-right whitespace-nowrap p-2">
-                    {moneyFormatDigital(item.price)}
+                    {discountNumbers(item).discountedPriceFormatted}
                   </td>
                   <td className="text-right whitespace-nowrap p-2">
                     {item.quantity}
                   </td>
                   <td className="text-right whitespace-nowrap p-2">
-                    {moneyFormatDigital(item.total)}
+                    {itemNumbers(item).totalWithDiscountFormatted}
                   </td>
                 </tr>
               ))}

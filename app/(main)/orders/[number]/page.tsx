@@ -100,6 +100,17 @@ export default function OrderPage() {
     updateStatusMutation.mutate({ status, number: order.number });
   };
 
+  const columns = [
+    "col-span-2 px-1 break-all",
+    "px-1",
+    "px-1",
+    "col-span-2 px-1",
+    "px-1",
+    "px-1",
+    "px-1",
+    "px-1 flex items-center justify-start",
+  ];
+
   return (
     <div>
       <TopBar
@@ -115,19 +126,15 @@ export default function OrderPage() {
       />
 
       <div className="orderInfo justify-between border border-zinc-200 dark:border-zinc-800 rounded-sm px-6 m-6">
-        <div className="w-full flex text-left py-6 text-default dark:text-zinc-600 text-sm items-center relative">
-          <div className="cutLine px-1 w-2/12">{ui.global.customer}</div>
-          <div className="cutLine px-1 w-1/12">{ui.global.phone}</div>
-          {order.email && (
-            <div className="cutLine px-1 w-1/12">{ui.global.email}</div>
-          )}
-          <div className="cutLine px-1 flex-grow">{ui.global.address}</div>
-          <div className="cutLine px-1 w-1/12">{ui.global.order_sum}</div>
-          <div className="cutLine px-1 w-1/12">{ui.global.paid}</div>
-          <div className="cutLine px-1 w-1/12">{ui.global.left}</div>
-          <div className="cutLine px-1 w-1/12 flex items-center justify-between">
-            {ui.global.deadline}
-          </div>
+        <div className="w-full grid grid-cols-10 text-left py-6 text-default dark:text-zinc-600 text-sm items-center relative">
+          <div className={columns[0]}>{ui.global.customer}</div>
+          <div className={columns[1]}>{ui.global.phone}</div>
+          <div className={columns[2]}>{ui.global.email}</div>
+          <div className={columns[3]}>{ui.global.address}</div>
+          <div className={columns[4]}>{ui.global.order_sum}</div>
+          <div className={columns[5]}>{ui.global.paid}</div>
+          <div className={columns[6]}>{ui.global.left}</div>
+          <div className={columns[7]}>{ui.global.deadline}</div>
           <div className="flex px-1 justify-end absolute -right-2 top-4">
             <Button
               variant={"outline"}
@@ -138,23 +145,23 @@ export default function OrderPage() {
             </Button>
           </div>
         </div>
-        <div className="flex justify-between text-left py-6 border-t border-zinc-200 dark:border-zinc-800 divide-zinc-200 dark:divide-zinc-800">
-          <div className="w-2/12 px-1 break-all">{order.client}</div>
-          <div className="w-1/12 px-1">{order.phone}</div>
-          {order.email && <div className="w-1/12 px-1">{order.email}</div>}
-          <div className="flex-grow px-1">{order.address}</div>
-          <div className="w-1/12 px-1">{orderTotal(order).currencyString}</div>
-          <div className="w-1/12 px-1">{moneyFormat(order.prepayment)}</div>
+        <div className="grid grid-cols-10 text-left py-6 border-t border-zinc-200 dark:border-zinc-800 divide-zinc-200 dark:divide-zinc-800">
+          <div className={columns[0]}>{order.client}</div>
+          <div className={columns[1]}>{order.phone}</div>
+          <div className={columns[2]}>{order.email}</div>
+          <div className={columns[3]}>{order.address}</div>
+          <div className={columns[4]}>{orderTotal(order).currencyString}</div>
+          <div className={columns[5]}>{moneyFormat(order.prepayment)}</div>
           <div
             className={
               orderLeft(order).number > 0
-                ? "text-red-500 w-1/12 px-1"
-                : "w-1/12 px-1"
+                ? `text-red-500 ${columns[6]}`
+                : columns[6]
             }
           >
             {orderLeft(order).currencyString}
           </div>
-          <div className="w-1/12 px-1">
+          <div className={columns[7]}>
             {orderDates(order).deadlineLocalDate}
             <span className="text-zinc-500 bg-zinc-200 dark:bg-zinc-800 px-1 ml-2 rounded-sm">
               {orderDates(order).deadlineDaysLeft}
