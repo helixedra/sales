@@ -101,14 +101,14 @@ export default function OrderPage() {
   };
 
   const columns = [
-    "col-span-2 px-1 break-all",
-    "px-1",
-    "px-1",
-    "col-span-2 px-1",
-    "px-1",
-    "px-1",
-    "px-1",
-    "px-1 flex items-center justify-start",
+    "px-1 w-full",
+    "px-1 w-full",
+    "px-1 w-full",
+    "px-1 w-full",
+    "px-1 w-full",
+    "px-1 w-full",
+    "px-1 w-full",
+    "px-1 w-full",
   ];
 
   return (
@@ -125,17 +125,52 @@ export default function OrderPage() {
         handleStatusChange={handleStatusChange}
       />
 
-      <div className="orderInfo justify-between border border-zinc-200 dark:border-zinc-800 rounded-sm px-6 m-6">
-        <div className="w-full grid grid-cols-10 text-left py-6 text-default dark:text-zinc-600 text-sm items-center relative">
-          <div className={columns[0]}>{ui.global.customer}</div>
-          <div className={columns[1]}>{ui.global.phone}</div>
-          <div className={columns[2]}>{ui.global.email}</div>
-          <div className={columns[3]}>{ui.global.address}</div>
-          <div className={columns[4]}>{ui.global.order_sum}</div>
-          <div className={columns[5]}>{ui.global.paid}</div>
-          <div className={columns[6]}>{ui.global.left}</div>
-          <div className={columns[7]}>{ui.global.deadline}</div>
-          <div className="flex px-1 justify-end absolute -right-2 top-4">
+      <div className="orderInfo justify-between border border-zinc-200 dark:border-zinc-800 rounded-sm px-6 m-4 py-4">
+        <div className="w-full items-start flex lg:flex-row gap-6 flex-col text-left py-2 text-default relative">
+          <div className={columns[0]}>
+            <div className="text-zinc-500">{ui.global.customer}</div>
+            {order.client}
+          </div>
+          <div className={columns[1]}>
+            <div className="text-zinc-500">{ui.global.phone}</div>
+            {order.phone}
+          </div>
+          {order.email && (
+            <div className={columns[2]}>
+              <div className="text-zinc-500">{ui.global.email}</div>
+              {order.email}
+            </div>
+          )}
+          <div className={columns[3]}>
+            <div className="text-zinc-500">{ui.global.address}</div>
+            {order.address}
+          </div>
+          <div className={columns[4]}>
+            <div className="text-zinc-500">{ui.global.order_sum}</div>
+            {orderTotal(order).currencyString}
+          </div>
+          <div className={columns[5]}>
+            <div className="text-zinc-500">{ui.global.paid}</div>
+            {moneyFormat(order.prepayment)}
+          </div>
+          <div className={columns[6]}>
+            <div className="text-zinc-500">{ui.global.left}</div>
+            <div>
+              {orderLeft(order).number > 0
+                ? orderLeft(order).currencyString
+                : "0"}
+            </div>
+          </div>
+          <div className={columns[7]}>
+            <div className="text-zinc-500">{ui.global.deadline}</div>
+            <div className="flex items-center">
+              <div>{orderDates(order).deadlineLocalDate}</div>
+              <div className="text-zinc-500 bg-zinc-200 dark:bg-zinc-800 px-1 ml-2 rounded-sm">
+                {orderDates(order).deadlineDaysLeft}
+              </div>
+            </div>
+          </div>
+          <div className="flex px-1 absolute -right-2 top-2">
             <Button
               variant={"outline"}
               className="flex ml-auto text-black dark:text-white"
@@ -145,37 +180,14 @@ export default function OrderPage() {
             </Button>
           </div>
         </div>
-        <div className="grid grid-cols-10 text-left py-6 border-t border-zinc-200 dark:border-zinc-800 divide-zinc-200 dark:divide-zinc-800">
-          <div className={columns[0]}>{order.client}</div>
-          <div className={columns[1]}>{order.phone}</div>
-          <div className={columns[2]}>{order.email}</div>
-          <div className={columns[3]}>{order.address}</div>
-          <div className={columns[4]}>{orderTotal(order).currencyString}</div>
-          <div className={columns[5]}>{moneyFormat(order.prepayment)}</div>
-          <div
-            className={
-              orderLeft(order).number > 0
-                ? `text-red-500 ${columns[6]}`
-                : columns[6]
-            }
-          >
-            {orderLeft(order).currencyString}
-          </div>
-          <div className={columns[7]}>
-            {orderDates(order).deadlineLocalDate}
-            <span className="text-zinc-500 bg-zinc-200 dark:bg-zinc-800 px-1 ml-2 rounded-sm">
-              {orderDates(order).deadlineDaysLeft}
-            </span>
-          </div>
-        </div>
       </div>
 
       {files && files.length > 0 && <Files data={files} />}
 
       {order.comment && (
-        <div className="commentBlock p-6 bg-orange-100 dark:bg-orange-950 text-orange-950 dark:text-orange-300 m-6 rounded-sm">
+        <div className="commentBlock p-6 bg-orange-100 dark:bg-orange-950 text-orange-950 dark:text-orange-300 m-4 rounded-sm">
           <div className="flex min-h-10 justify-center">
-            <div className="text-orange-400 p-2 rounded-t-sm">
+            <div className="text-orange-400 p-2 rounded-t-sm lg:block hidden">
               <RiMessage2Fill style={{ width: "24px", height: "24px" }} />
             </div>
             <div

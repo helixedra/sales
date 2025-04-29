@@ -4,99 +4,33 @@ import Link from "next/link";
 import clsx from "clsx";
 import { Item } from "@/app/types/Item";
 import { Order } from "@/app/types/Order";
-import statuses from "@/lib/status";
-import Status from "@/components/shared/status";
 import Loader from "@/components/shared/loader";
 import { TopBar } from "@/components/pages/homepage/topbar";
-import { orderDates } from "@/lib/order-dates";
-import { orderTotal, orderLeft } from "@/lib/order-numbers";
 import { useAllOrdersData } from "@/hooks/api/useOrderData";
 import ui from "@/app/data/ui.json";
+import { TABLE } from "@/components/pages/homepage/constants";
+import {
+  TABLE_ROW_STYLES,
+  TABLE_HEADER_STYLES,
+} from "@/components/pages/homepage/constants";
 
 // Styles
 import "@/app/styles/homepage.css";
-
-// Constants
-const TABLE_HEADERS: { key: keyof typeof ui.sales_table; width: string }[] = [
-  { key: "num", width: "w-[2%] max-w-[60px]" },
-  { key: "date", width: "w-[5%] hidden md:block" },
-  { key: "status", width: "w-[20px] md:w-[5%]" },
-  { key: "customer", width: "w-[10%]" },
-  { key: "order", width: "w-[35%] hidden md:block" },
-  { key: "total", width: "w-[5%]" },
-  { key: "left", width: "w-[5%] hidden lg:block" },
-  { key: "deadline", width: "w-[5%] hidden xl:block" },
-  { key: "days_left", width: "w-[2%] text-center" },
-];
-
-const stylingCancel = (status: string) =>
-  clsx({
-    "line-through opacity-40": status === "canceled",
-  });
+import OrderItem from "@/components/pages/homepage/OrderItem";
 
 // Table row component
 const OrderRow = ({ order }: { order: Order }) => {
   return (
     <Link href={`/orders/${order.number}`} className="block">
-      <div className="TableRow">
-        <div className={`w-[2%] max-w-[60px] ${stylingCancel(order.status)}`}>
-          {order.number}
-        </div>
-        <div
-          className={`w-[5%] hidden md:block ${stylingCancel(order.status)}`}
-        >
-          {orderDates(order).dateLocal}
-        </div>
-        <div className="w-[20px] md:w-[5%]">
-          <Status
-            status={order.status}
-            name={statuses[order.status].name}
-            className="opacity-100 no-line-through"
-          />
-        </div>
-        <div className={`w-[10%] cutLine ${stylingCancel(order.status)}`}>
-          {order.client}
-        </div>
-        <div
-          className={`w-[35%] hidden md:flex items-center ${stylingCancel(
-            order.status
-          )}`}
-        >
-          {order.items.map((item: Item) => (
-            <div key={item.id} className="OrderItem" title={item.description}>
-              {item.description}
-            </div>
-          ))}
-        </div>
-        <div className={`w-[5%] ${stylingCancel(order.status)}`}>
-          {orderTotal(order).numberDigital}
-        </div>
-        <div
-          className={`w-[5%] hidden lg:block ${stylingCancel(order.status)}`}
-        >
-          {orderLeft(order).numberDigital}
-        </div>
-        <div
-          className={`w-[5%] hidden xl:block ${stylingCancel(order.status)}`}
-        >
-          {orderDates(order).deadlineLocalDate}
-        </div>
-        <div
-          className={`w-[2%] text-center cutLine ${stylingCancel(
-            order.status
-          )}`}
-        >
-          {orderDates(order).deadlineDaysLeft}
-        </div>
-      </div>
+      <OrderItem order={order} />
     </Link>
   );
 };
 
 // Table header component
 const TableHeader = () => (
-  <div className="TableHeader">
-    {TABLE_HEADERS.map(({ key, width }) => (
+  <div className={TABLE_HEADER_STYLES}>
+    {TABLE.map(({ key, width }) => (
       <div key={key} className={clsx(width, "cutLine")}>
         {ui.sales_table[key]}
       </div>
@@ -166,7 +100,7 @@ export default function OrdersPage() {
     <main>
       <TopBar newSaleNumber={newSaleNumber} searchHandler={searchHandler} />
 
-      <div className="TableContainer p-4">
+      <div className="TableContainer p-0 lg:p-4">
         <TableHeader />
 
         <div className="TableBody">

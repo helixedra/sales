@@ -41,60 +41,84 @@ export function TopBar({
 }: Props) {
   const date = moment(data.date).format("DD.MM.YYYY");
   return (
-    <div className="flex p-6 items-center border-b border-zinc-100 dark:border-zinc-800">
-      <div className="flex items-center text-4xl mr-6 pr-6 border-r border-1 border-gray-200 dark:border-zinc-700 border-solid">
-        <div className="mr-4">№ {data.number}</div>
-        <div className="text-xl opacity-50">від {date}</div>
+    <div className="flex gap-4 flex-col md:flex-row p-6 items-start md:items-center border-b border-zinc-100 dark:border-zinc-800">
+      <div className="flex flex-col md:flex-row items-center gap-4">
+        <div className="flex items-center text-4xl border-1 border-gray-200 dark:border-zinc-700 border-solid">
+          <div className="mr-4 text-2xl text-nowrap font-bold">
+            № {data.number}
+          </div>
+          <div className="text-lg opacity-50 text-nowrap">від {date}</div>
+        </div>
+
+        <div className="flex items-center">
+          <div className={`status-${data.status} mr-4`}>
+            <RiCircleFill />
+          </div>
+          <div className="ml-2">
+            <Select value={data.status} onValueChange={handleStatusChange}>
+              <SelectTrigger className="w-[180px] dark:bg-zinc-800 bg-zinc-100 border border-zinc-200 dark:border-zinc-700 rounded-sm p-2">
+                <SelectValue className={`status-${data.status}`}>
+                  {statuses[data.status]?.name || data.status}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {Object.keys(ui.status).map((status) => (
+                  <SelectItem
+                    key={status}
+                    value={status}
+                    className={`status-${status}`}
+                  >
+                    {statuses[status].name || status}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
       </div>
-      <div className={`status-${data.status} mr-4`}>
-        <RiCircleFill />
-      </div>
-      <div className="ml-2">
-        <Select value={data.status} onValueChange={handleStatusChange}>
-          <SelectTrigger className="w-[180px] dark:bg-zinc-800 bg-zinc-100 border border-zinc-200 dark:border-zinc-700 rounded-sm p-2">
-            <SelectValue className={`status-${data.status}`}>
-              {statuses[data.status]?.name || data.status}
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            {Object.keys(ui.status).map((status) => (
-              <SelectItem
-                key={status}
-                value={status}
-                className={`status-${status}`}
-              >
-                {statuses[status].name || status}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-      <div className="actionButtons ml-auto space-x-4">
+      <div className="actionButtons md:ml-auto space-x-4 flex items-center">
         {!data.comment && (
           <Button
             onClick={commentDialog}
             variant="outline"
-            className="border border-solid text-orange-500 border-orange-500 bg-transparent hover:bg-orange-500 hover:text-white"
+            title={ui.global.add_comment}
+            className="w-full md:min-w-[60px] xl:w-fit border border-solid text-orange-500 border-orange-500 bg-transparent hover:bg-orange-500 hover:text-white"
           >
             <RiChatNewLine />
-            {ui.global.add_comment}
+            <span className="hidden xl:block">{ui.global.add_comment}</span>
           </Button>
         )}
-        <Button onClick={uploadDialog}>
+        <Button
+          onClick={uploadDialog}
+          title={ui.global.upload_files}
+          className="w-full md:min-w-[60px] xl:w-fit"
+        >
           <RiUploadCloud2Line />
-          {ui.global.upload_files}
+          <span className="hidden xl:block">{ui.global.upload_files}</span>
         </Button>
-        <Button onClick={receiptDialog}>
+        <Button
+          onClick={receiptDialog}
+          title={ui.global.receipt}
+          className="w-full md:min-w-[60px] xl:w-fit"
+        >
           <RiReceiptLine />
-          {ui.global.receipt}
+          <span className="hidden xl:block">{ui.global.receipt}</span>
         </Button>
-        <Button onClick={requestFormDialog}>
+        <Button
+          onClick={requestFormDialog}
+          title={ui.global.request_form}
+          className="w-full md:min-w-[60px] xl:w-fit"
+        >
           <RiBillLine />
-          {ui.global.request_form}
+          <span className="hidden xl:block">{ui.global.request_form}</span>
         </Button>
-        <Button onClick={invoiceDialog}>
+        <Button
+          onClick={invoiceDialog}
+          title={ui.global.invoice}
+          className="w-full md:min-w-[60px] xl:w-fit"
+        >
           <RiMoneyDollarBoxLine />
-          {ui.global.invoice}
+          <span className="hidden xl:block">{ui.global.invoice}</span>
         </Button>
       </div>
     </div>

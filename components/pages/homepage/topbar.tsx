@@ -32,13 +32,13 @@ export function TopBar({
   };
 
   return (
-    <div className="topBar flex items-center p-6 bg-white dark:bg-zinc-900 border-b border-zinc-100 dark:border-zinc-800">
+    <div className="topBar flex gap-4 items-center lg:p-6 p-4 bg-white dark:bg-zinc-900 border-b border-zinc-100 dark:border-zinc-800">
       <Button
         variant="default"
         onClick={() => router.push(`/orders/new?number=${newSaleNumber}`)}
       >
         <RiAddFill style={{ width: "24px", height: "24px" }} />
-        {ui.global.add_new}
+        <span className="hidden lg:block">{ui.global.add_new}</span>
       </Button>
 
       <div className="relative flex-1 ml-auto max-w-[300px]">
